@@ -1,24 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour {
+
+
+    public new Camera camera;
+    public Rigidbody body;
+    public SpringJoint springJoint;
+    public PlayerSettings playerSettings;
 
     public bool isAlive = true;
 
 
-    private Rigidbody body;
+
 
     private void Awake() {
-        body = GetComponent<Rigidbody>();
 
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
 
 
     private void Update() {
-        isAlive = !Input.GetKey(KeyCode.LeftControl);
+        isAlive = !Input.GetKey(KeyCode.LeftAlt);
 
         body.freezeRotation = isAlive;
     }
