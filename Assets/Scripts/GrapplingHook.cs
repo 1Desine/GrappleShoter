@@ -6,7 +6,7 @@ public class GrapplingHook : MonoBehaviour {
 
     [SerializeField] Transform anchorTransform;
 
-    float pullUpSpeed = 20;
+    [SerializeField] float pullUpSpeed;
 
 
 
@@ -24,18 +24,20 @@ public class GrapplingHook : MonoBehaviour {
         else anchorTransform.position = anchorPosition;
 
 
-        if (Input.GetKey(KeyCode.LeftShift) && anchorPosition == Vector3.zero) {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(player.camera.transform.position, player.camera.transform.forward, out RaycastHit hit);
+        if (player.isAlive) {
+            if (Input.GetKey(KeyCode.LeftShift) && anchorPosition == Vector3.zero) {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Physics.Raycast(player.camera.transform.position, player.camera.transform.forward, out RaycastHit hit);
+                // can connect only to static objects
+                if (hit.rigidbody == null) SetAnchorPosition(hit.point);
+            }
+            if (Input.GetKeyUp(KeyCode.LeftShift)) {
+                ResetAnchorPosition();
+            }
 
-            SetAnchorPosition(hit.point);
-        }
-        if (Input.GetKeyUp(KeyCode.LeftShift)) {
-            ResetAnchorPosition();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            PullUp();
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                PullUp();
+            }
         }
     }
 

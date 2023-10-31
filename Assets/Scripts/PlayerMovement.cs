@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerMoveLook : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour {
     Player player;
 
     [SerializeField] float moveForce;
@@ -8,6 +8,7 @@ public class PlayerMoveLook : MonoBehaviour {
     [SerializeField] float stopForce;
     [SerializeField] float airMoveForce;
     [SerializeField] float maxSpeedByWalk;
+    [SerializeField] float groundFrictionForce;
     [SerializeField] float jumpBuffering;
     float lastJumpRequestTime;
     bool wannaJump;
@@ -26,20 +27,22 @@ public class PlayerMoveLook : MonoBehaviour {
             Looking();
             Movement();
         }
+        else {
+            player.camera.transform.localEulerAngles = Vector3.zero;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
             lastJumpRequestTime = Time.time;
             wannaJump = true;
         }
         if (Input.GetKeyUp(KeyCode.Space)) wannaJump = false;
-
     }
 
     void Movement() {
         Vector2 moveInput = GameInput.Instance.GetMoveVector2();
         Vector3 desiredMoveDir = transform.forward * moveInput.y + transform.right * moveInput.x;
 
-        RaycastHit[] sphereHits = Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.5f, Vector3.down, 0.1f);
+        RaycastHit[] sphereHits = Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.49f, Vector3.down, 0.1f);
         if (sphereHits.Length == 1) {
             // move while airborn
             player.body.AddForce(desiredMoveDir * airMoveForce * Time.deltaTime);
@@ -80,7 +83,7 @@ public class PlayerMoveLook : MonoBehaviour {
 
 
                 // jump
-                if (Time.time - lastJumpRequestTime < jumpBuffering 
+                if (Time.time - lastJumpRequestTime < jumpBuffering
                     && wannaJump) {
                     Jump();
                     wannaJump = false;
@@ -88,6 +91,9 @@ public class PlayerMoveLook : MonoBehaviour {
 
                 // stop
                 if (Input.GetKey(KeyCode.LeftControl)) player.body.velocity = Vector3.zero;
+
+                // ground friction
+                player.body.AddForce(Vector3.ClampMagnitude(-player.body.velocity, 1) * groundFrictionForce * Time.deltaTime);
             }
         }
     }
@@ -100,6 +106,10 @@ public class PlayerMoveLook : MonoBehaviour {
         player.camera.transform.localEulerAngles = Vector3.right * Mathf.Clamp(-lookVector.y, -90, 90);
     }
     void Jump() => player.body.AddForce(Vector3.up * 500);
+
+
+    public void Push(Vector3 pushForce) => player.body.AddForce(pushForce);
+    public void Push(Vector3 pushForce, Vector3 position) => player.body.AddForceAtPosition(pushForce, position);
 
 
 }

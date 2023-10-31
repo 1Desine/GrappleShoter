@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GunsHandler : MonoBehaviour {
-
+    public Player player;
 
     [SerializeField] List<Gun> gunsList;
     int selectedGunIndex = 0;
@@ -17,13 +16,8 @@ public class GunsHandler : MonoBehaviour {
     }
 
     private void Update() {
-
         if (Input.GetMouseButton(0)) Shoot();
         if (Input.GetKeyDown(KeyCode.R)) Reload();
-
-
-
-
     }
 
 
@@ -31,6 +25,10 @@ public class GunsHandler : MonoBehaviour {
     public void Reload() => gunsList[selectedGunIndex].Reload();
 
 
-
+    public void ResetWeapons() {
+        foreach (Gun gun in gunsList) {
+            gun.ResetWeapon();
+        }
+    }
 
 }

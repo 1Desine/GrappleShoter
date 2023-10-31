@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Gun : MonoBehaviour {
@@ -7,7 +6,7 @@ public class Gun : MonoBehaviour {
     [SerializeField] Transform visualTransform;
 
     [SerializeField, Min(0)] float reloadTime;
-    [SerializeField] uint damage;
+    [SerializeField, Min(0)] int damage;
     [SerializeField, Min(0)] float fireRate;
     float _fireRate { get { return fireRate / 60f / 100f; } }
     [SerializeField] float recoil;
@@ -19,21 +18,45 @@ public class Gun : MonoBehaviour {
     float reloadProgressTime;
 
 
+    GunsHandler gunsHandler;
+
+
     private void Awake() {
+        ResetWeapon();
+
+        gunsHandler = transform.parent.GetComponent<GunsHandler>();
+    }
+    public void ResetWeapon() {
         bulletsLoaded = clipSize;
         gunUI.SetLoadedBullets(bulletsLoaded, clipSize);
     }
 
 
+
     public void Shoot() {
-        if (bulletsLoaded == 0) return;
+        if (bulletsLoaded == 0) {
+            Reload();
+            return;
+        }
 
         reloading = false;
+        gunUI.SetReloadProgress(reloadTime, 0);
 
         if (Time.time - lastShotTime > _fireRate) {
             lastShotTime = Time.time;
 
             bulletsLoaded--;
+            gunsHandler.player.playerMovement.Push(-transform.forward * recoil * GameManager.Instance.recoilModifier);
+
+            if (Physics.Raycast(gunsHandler.player.camera.transform.position, gunsHandler.player.camera.transform.forward, out RaycastHit hit)) {
+                if (hit.rigidbody != null) {
+                    if (hit.rigidbody.TryGetComponent(out Player playerHit)) {
+                        playerHit.Damage(damage);
+                        playerHit.playerMovement.Push(transform.forward * recoil * GameManager.Instance.recoilModifier, hit.point);
+                    }
+                }
+                Debug.DrawLine(transform.position, hit.point, Color.red, 1);
+            }
 
             gunUI.SetLoadedBullets(clipSize, bulletsLoaded);
         }
