@@ -20,15 +20,18 @@ public class PlayerMovement : MonoBehaviour {
     private void Awake() {
         player = GetComponent<Player>();
     }
+    private void Start() {
+        player.OnPlayerUpdate += Player_OnPlayerUpdate;
+    }
 
 
-    private void Update() {
+    void Player_OnPlayerUpdate() {
         if (player.isAlive) {
             Looking();
             Movement();
         }
         else {
-            player.camera.transform.localEulerAngles = Vector3.zero;
+            player.lookVerticalPivot.localEulerAngles = Vector3.zero;
         }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
@@ -103,7 +106,7 @@ public class PlayerMovement : MonoBehaviour {
 
         transform.eulerAngles = Vector3.up * lookVector.x;
 
-        player.camera.transform.localEulerAngles = Vector3.right * Mathf.Clamp(-lookVector.y, -90, 90);
+        player.lookVerticalPivot.localEulerAngles = Vector3.right * Mathf.Clamp(-lookVector.y, -90, 90);
     }
     void Jump() => player.body.AddForce(Vector3.up * 500);
 

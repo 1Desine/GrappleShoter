@@ -12,10 +12,12 @@ public class GunsHandler : MonoBehaviour {
             gun.Hide();
         }
         gunsList[selectedGunIndex].Show();
-
+    }
+    private void Start() {
+        player.OnPlayerUpdate += Player_OnPlayerUpdate;
     }
 
-    private void Update() {
+    void Player_OnPlayerUpdate() {
         if (Input.GetMouseButton(0)) Shoot();
         if (Input.GetKeyDown(KeyCode.R)) Reload();
     }

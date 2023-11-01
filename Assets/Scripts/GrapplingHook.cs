@@ -17,9 +17,12 @@ public class GrapplingHook : MonoBehaviour {
     private void Awake() {
         player = GetComponent<Player>();
     }
+    private void Start() {
+        player.OnPlayerUpdate += Player_OnPlayerUpdate;
+    }
 
 
-    private void Update() {
+    void Player_OnPlayerUpdate() {
         if (anchorPosition == Vector3.zero) anchorTransform.localPosition = Vector3.zero;
         else anchorTransform.position = anchorPosition;
 
