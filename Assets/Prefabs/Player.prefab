@@ -1052,7 +1052,7 @@ MonoBehaviour:
   playerSettings: {fileID: 11400000, guid: d817d975aa5f9884db56b55fe7b822dd, type: 2}
   playerMovement: {fileID: 2126549854389873862}
   gunsHandler: {fileID: 624067279792652341}
-  capsule: {fileID: 2317875243874259285}
+  networkObject: {fileID: -2471056972147329512}
 --- !u!114 &2126549854389873862
 MonoBehaviour:
   m_ObjectHideFlags: 0

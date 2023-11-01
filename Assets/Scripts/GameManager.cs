@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour {
 
 
     [SerializeField] List<Transform> spawnPoints;
-    List<Player> playersList = new List<Player>();
+    public Dictionary<ulong,Player> playersList = new Dictionary<ulong, Player>();
 
 
     [Header("Game Settings")]
@@ -16,20 +16,31 @@ public class GameManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+
+        StartCoroutine(SpawnPlayers_Coroutine());
     }
-    
+
 
 
     public void RegisterPlayer(Player player) {
-        playersList.Add(player);
+        playersList.Add(player.OwnerClientId, player);
     }
     public void UnregisterPlayer(Player player) {
-        playersList.Remove(player);
+        playersList.Remove(player.OwnerClientId);
     }
 
 
     public Vector3 GetRandomSpawnPoint() {
         return spawnPoints[Random.Range(0, spawnPoints.Count)].position;
+    }
+
+    IEnumerator SpawnPlayers_Coroutine() {
+        yield return new WaitForSeconds(1);
+
+        
+
+
+        StartCoroutine(SpawnPlayers_Coroutine());
     }
 
 }
