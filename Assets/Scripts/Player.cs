@@ -19,7 +19,7 @@ public class Player : NetworkBehaviour {
     public NetworkObject networkObject;
 
     int health = 100;
-    public bool isAlive { get { return health > 0; } }
+    public bool isAlive => health > 0;
 
 
     public Action OnPlayerUpdate = () => { };
@@ -48,10 +48,12 @@ public class Player : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = false)]
     public void Damage_ServerRpc(int damage, Vector3 hitPoint, Vector3 pushVector, ulong playerId) {
-        Damage_ClientRpc(damage, hitPoint, pushVector, new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new List<ulong> { playerId } } });
+        Damage_ClientRpc(damage, hitPoint, pushVector, playerId);
     }
     [ClientRpc]
-    public void Damage_ClientRpc(int damage, Vector3 hitPoint, Vector3 pushVector, ClientRpcParams clientRpcParams) {
+    public void Damage_ClientRpc(int damage, Vector3 hitPoint, Vector3 pushVector, ulong playerId) {
+        if (OwnerClientId != playerId) return;
+
         if (health - damage <= 0 && isAlive) Die();
         health -= damage;
 
