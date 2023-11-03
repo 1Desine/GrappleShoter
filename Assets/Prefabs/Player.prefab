@@ -110,7 +110,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -157,7 +157,7 @@ Transform:
   m_GameObject: {fileID: 1297546673334684329}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.4, z: 0}
+  m_LocalPosition: {x: 0, y: 1.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -176,6 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8a46106182c3ef40bb292e8389c4ef7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visual: {fileID: 6106780041108759531}
   ropeStiffness: 100
   ropeDamper: 5
   pullRopeSpeed: 20
@@ -201,7 +202,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 028cc11d7d92c3e4d9eff2c6dccf79f3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -224,7 +225,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.1
@@ -274,11 +275,11 @@ LineRenderer:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
-    numCapVertices: 0
+    numCapVertices: 2
     alignment: 0
-    textureMode: 0
-    textureScale: {x: 1, y: 1}
-    shadowBias: 0.5
+    textureMode: 1
+    textureScale: {x: 0.44, y: 0.23}
+    shadowBias: 0
     generateLightingData: 0
   m_MaskInteraction: 0
   m_UseWorldSpace: 1
@@ -981,7 +982,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 45, y: 45, z: 20}
+  m_LocalScale: {x: 45, y: 45, z: 45}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6584117658342163848}
@@ -1014,7 +1015,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 028cc11d7d92c3e4d9eff2c6dccf79f3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1047,6 +1048,7 @@ GameObject:
   - component: {fileID: 7697996444637559632}
   - component: {fileID: -2471056972147329512}
   - component: {fileID: 7262566712764035822}
+  - component: {fileID: 7420063237037956715}
   - component: {fileID: 5847881121523112284}
   - component: {fileID: 4987443683202435991}
   - component: {fileID: 2126549854389873862}
@@ -1125,6 +1127,18 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &7420063237037956715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6435801785500155168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &5847881121523112284
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1170,6 +1184,8 @@ MonoBehaviour:
   playerMovement: {fileID: 2126549854389873862}
   gunsHandler: {fileID: 624067279792652341}
   networkObject: {fileID: -2471056972147329512}
+  suffocationSpeed: 0.1
+  desuffocationSpeed: 1
 --- !u!114 &2126549854389873862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,10 +1225,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxSpeedByWalk: 10
   walkStoppingForce: 5000
-  airMoveForce: 300
+  airMoveForce: 500
   airbornStoppingForce: 1000
   groundFrictionForce: 100
-  jumpBuffering: 1
+  jumpForce: 150
 --- !u!1 &6679529123785699856
 GameObject:
   m_ObjectHideFlags: 0

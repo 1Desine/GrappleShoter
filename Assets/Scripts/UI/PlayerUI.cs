@@ -1,18 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class PlayerUI : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public class PlayerUI : MonoBehaviour {
+    public static PlayerUI Instance { get; private set; }
+
+    [SerializeField] Image suffocationImage;
+    [SerializeField] Gradient suffocationGradient;
+
+
+    private void Awake() {
+        Instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
+    public void SetSuffocation(float suffocation01) => suffocationImage.color = suffocationGradient.Evaluate(suffocation01);
+
+
 }

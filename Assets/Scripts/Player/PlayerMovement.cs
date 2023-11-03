@@ -10,9 +10,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] float airMoveForce;
     [SerializeField] float airbornStoppingForce;
     [SerializeField] float groundFrictionForce;
-    [SerializeField] float jumpBuffering;
-    float lastJumpRequestTime;
-    bool wannaJump;
+    [SerializeField] float jumpForce;
 
     Vector2 lookVector;
 
@@ -22,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
         player = GetComponent<Player>();
     }
     private void Start() {
-        player.OnPlayerUpdate += Player_OnPlayerUpdate;
+        player.OnUpdate += Player_OnPlayerUpdate;
     }
 
 
@@ -35,11 +33,6 @@ public class PlayerMovement : MonoBehaviour {
             player.lookVerticalPivot.localEulerAngles = Vector3.zero;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            lastJumpRequestTime = Time.time;
-            wannaJump = true;
-        }
-        if (Input.GetKeyUp(KeyCode.Space)) wannaJump = false;
     }
     RaycastHit[] GetGroundCheckHits => Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.49f, Vector3.down, 0.1f);
     void Movement() {
@@ -103,11 +96,7 @@ public class PlayerMovement : MonoBehaviour {
 
 
                 // jump
-                if (Time.time - lastJumpRequestTime < jumpBuffering
-                    && wannaJump) {
-                    Jump();
-                    wannaJump = false;
-                }
+                if (Input.GetKeyDown(KeyCode.Space)) Jump();
 
                 // stop
                 if (wannaSlowDown) player.body.velocity = Vector3.zero;
@@ -117,15 +106,15 @@ public class PlayerMovement : MonoBehaviour {
             }
         }
     }
+    void Jump() => player.body.AddForce(Vector3.up * jumpForce);
     void Looking() {
         Vector2 lookInput = InputManager.Instance.GetLookVector2Delta() * 0.1f;
         lookVector += lookInput;
+        lookVector.y = Mathf.Clamp(lookVector.y, -90, 90);
 
         transform.eulerAngles = Vector3.up * lookVector.x;
-
-        player.lookVerticalPivot.localEulerAngles = Vector3.right * Mathf.Clamp(-lookVector.y, -90, 90);
+        player.lookVerticalPivot.localEulerAngles = -Vector3.right * lookVector.y;
     }
-    void Jump() => player.body.AddForce(Vector3.up * 500);
 
 
     public void Push(Vector3 pushForce) => player.body.AddForce(pushForce);

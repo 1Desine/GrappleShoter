@@ -14,7 +14,7 @@ public class GunsHandler : MonoBehaviour {
         gunsList[selectedGunIndex].Show();
     }
     private void Start() {
-        player.OnPlayerUpdate += Player_OnPlayerUpdate;
+        player.OnUpdate += Player_OnPlayerUpdate;
     }
 
     void Player_OnPlayerUpdate() {

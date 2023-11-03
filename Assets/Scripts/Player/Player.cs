@@ -18,8 +18,12 @@ public class Player : NetworkBehaviour {
     int health = 100;
     public bool isAlive => health > 0;
 
+    [SerializeField] float suffocationSpeed;
+    [SerializeField] float desuffocationSpeed;
+    float suffocation;
 
-    public Action OnPlayerUpdate = () => { };
+
+    public Action OnUpdate = () => { };
 
 
     private void Awake() {
@@ -36,12 +40,28 @@ public class Player : NetworkBehaviour {
     private void Update() {
         if (IsOwner == false) return;
 
-        OnPlayerUpdate();
+        OnUpdate();
 
         if (Input.GetKeyDown(KeyCode.LeftAlt)) Die();
         if (Input.GetKeyDown(KeyCode.LeftAlt)) health = 0;
+
+        UpdateSuffocation();
     }
 
+    void UpdateSuffocation() {
+        float suffocationApply = 0;
+        if (rope != null) {
+            if (rope.currentForce.magnitude > 2) suffocationApply = Mathf.Min(rope.currentForce.magnitude, 5) * suffocationSpeed;
+            else suffocationApply = -desuffocationSpeed;
+        }
+        else suffocationApply = -desuffocationSpeed;
+
+        suffocation = Mathf.Clamp01(suffocation + suffocationApply * Time.deltaTime);
+
+        if (PlayerUI.Instance != null) {
+            PlayerUI.Instance.SetSuffocation(suffocation);
+        }
+    }
 
 
     [ServerRpc(RequireOwnership = false)]
@@ -77,7 +97,7 @@ public class Player : NetworkBehaviour {
         Vector3 randomV3 = new Vector3(Mathf.Cos(randomFloat), 0, Mathf.Sin(randomFloat));
         body.AddForceAtPosition(transform.position, randomV3 * 100);
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(5);
         Hide();
         yield return new WaitForSeconds(1);
         Spawn();

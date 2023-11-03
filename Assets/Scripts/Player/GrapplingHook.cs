@@ -4,6 +4,7 @@ using UnityEngine;
 public class GrapplingHook : MonoBehaviour {
     Player player;
 
+    [SerializeField] GameObject visual;
     [SerializeField] float ropeStiffness;
     [SerializeField] float ropeDamper;
     [SerializeField] float pullRopeSpeed;
@@ -17,9 +18,10 @@ public class GrapplingHook : MonoBehaviour {
     private void Awake() {
         player = transform.parent.GetComponent<Player>();
         lineRenderer = GetComponent<LineRenderer>();
+        visual.layer = 6;
     }
     private void Start() {
-        player.OnPlayerUpdate += Player_OnPlayerUpdate;
+        player.OnUpdate += Player_OnPlayerUpdate;
     }
 
     void Player_OnPlayerUpdate() {
@@ -72,16 +74,27 @@ public class GrapplingHook : MonoBehaviour {
         player.rope.maxDistance -= pullRopeSpeed * Time.deltaTime;
     }
     void UpdateRopeAnchor() {
-        float dotForward = Vector3.Dot(player.rope.connectedAnchor - transform.position, transform.forward);
-        float dotRight = Vector3.Dot(player.rope.connectedAnchor - transform.position, transform.right);
-        player.rope.anchor = transform.localPosition + new Vector3(dotRight, 0, dotForward).normalized * ropePivotDistance;
+        if (player.rope.connectedBody == null) {
+            float dotForward = Vector3.Dot(player.rope.connectedAnchor - transform.position, transform.forward);
+            float dotRight = Vector3.Dot(player.rope.connectedAnchor - transform.position, transform.right);
+            player.rope.anchor = transform.localPosition + new Vector3(dotRight, 0, dotForward).normalized * ropePivotDistance;
+        }
+        else {
+            float dotForward = Vector3.Dot(player.rope.connectedBody.position - transform.position, transform.forward);
+            float dotRight = Vector3.Dot(player.rope.connectedBody.position - transform.position, transform.right);
+            player.rope.anchor = transform.localPosition + new Vector3(dotRight, 0, dotForward).normalized * ropePivotDistance;
+        }
     }
     void HandleLineRenderer() {
         if (player.rope == null) lineRenderer.enabled = false;
 
         else {
             lineRenderer.enabled = true;
-            lineRenderer.SetPositions(new Vector3[] { player.transform.TransformPoint(player.rope.anchor), player.rope.connectedAnchor });
+            lineRenderer.SetPosition(0, player.transform.TransformPoint(player.rope.anchor));
+            if (player.rope.connectedBody != null) {
+                lineRenderer.SetPosition(1, player.rope.connectedBody.position);
+            }
+            else lineRenderer.SetPosition(1, player.rope.connectedAnchor);
         }
     }
 }
