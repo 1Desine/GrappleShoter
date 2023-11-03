@@ -5,9 +5,10 @@ public class PlayerMovement : MonoBehaviour {
 
     [SerializeField] float moveForce;
     [SerializeField] AnimationCurve moveForceCurve;
-    [SerializeField] float stopForce;
-    [SerializeField] float airMoveForce;
     [SerializeField] float maxSpeedByWalk;
+    [SerializeField] float walkStoppingForce;
+    [SerializeField] float airMoveForce;
+    [SerializeField] float airbornStoppingForce;
     [SerializeField] float groundFrictionForce;
     [SerializeField] float jumpBuffering;
     float lastJumpRequestTime;
@@ -40,18 +41,34 @@ public class PlayerMovement : MonoBehaviour {
         }
         if (Input.GetKeyUp(KeyCode.Space)) wannaJump = false;
     }
-
+    RaycastHit[] GetGroundCheckHits => Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.49f, Vector3.down, 0.1f);
     void Movement() {
         Vector2 moveInput = GameInput.Instance.GetMoveVector2();
         Vector3 desiredMoveDir = transform.forward * moveInput.y + transform.right * moveInput.x;
 
-        RaycastHit[] sphereHits = Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.49f, Vector3.down, 0.1f);
-        if (sphereHits.Length == 1) {
+        bool wannaSlowDown = Input.GetKey(KeyCode.LeftControl);
+
+
+        RaycastHit[] groundHits = GetGroundCheckHits;
+        if (groundHits.Length == 1) {
             // move while airborn
-            player.body.AddForce(desiredMoveDir * airMoveForce * Time.deltaTime);
+
+            // move forward
+            float forwardForce = 0;
+            if (Vector3.Dot(transform.forward * moveInput.y, player.body.velocity) > 0)
+                forwardForce = airMoveForce;
+            else forwardForce = airbornStoppingForce;
+            player.body.AddForce(transform.forward * moveInput.y * forwardForce * Time.deltaTime);
+
+            // move right
+            float rightFroce = 0;
+            if (Vector3.Dot(transform.right * moveInput.x, player.body.velocity) > 0)
+                rightFroce = airMoveForce;
+            else rightFroce = airbornStoppingForce;
+            player.body.AddForce(transform.right * moveInput.x * rightFroce * Time.deltaTime);
         }
         else {
-            foreach (RaycastHit hit in sphereHits) {
+            foreach (RaycastHit hit in groundHits) {
                 if (hit.collider.transform == transform) continue;
                 /* Works but weird 
                                     
@@ -73,16 +90,16 @@ public class PlayerMovement : MonoBehaviour {
                 float forwardForce = 0;
                 if (Vector3.Dot(forwardByNormal * moveInput.y, player.body.velocity) > 0)
                     forwardForce = moveForce * moveForceCurve.Evaluate(Mathf.Clamp01(Mathf.Abs(Vector3.Dot(forwardByNormal * moveInput.y, player.body.velocity)) / maxSpeedByWalk));
-                else forwardForce = stopForce;
-                player.body.AddForce(forwardByNormal * moveInput.y * forwardForce / (sphereHits.Length - 1) * Time.deltaTime);
+                else forwardForce = walkStoppingForce;
+                player.body.AddForce(forwardByNormal * moveInput.y * forwardForce / (groundHits.Length - 1) * Time.deltaTime);
 
                 // move right
                 var rightByNormal = Vector3.Dot(transform.right, Vector3.Cross(transform.forward, hit.normal).normalized) * Vector3.Cross(transform.forward, hit.normal).normalized;
                 float rightFroce = 0;
                 if (Vector3.Dot(rightByNormal * moveInput.x, player.body.velocity) > 0)
                     rightFroce = moveForce * moveForceCurve.Evaluate(Mathf.Clamp01(Mathf.Abs(Vector3.Dot(rightByNormal * moveInput.x, player.body.velocity)) / maxSpeedByWalk));
-                else rightFroce = stopForce;
-                player.body.AddForce(rightByNormal * moveInput.x * rightFroce / (sphereHits.Length - 1) * Time.deltaTime);
+                else rightFroce = walkStoppingForce;
+                player.body.AddForce(rightByNormal * moveInput.x * rightFroce / (groundHits.Length - 1) * Time.deltaTime);
 
 
                 // jump
@@ -93,7 +110,7 @@ public class PlayerMovement : MonoBehaviour {
                 }
 
                 // stop
-                if (Input.GetKey(KeyCode.LeftControl)) player.body.velocity = Vector3.zero;
+                if (wannaSlowDown) player.body.velocity = Vector3.zero;
 
                 // ground friction
                 player.body.AddForce(Vector3.ClampMagnitude(-player.body.velocity, 1) * groundFrictionForce * Time.deltaTime);

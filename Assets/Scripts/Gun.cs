@@ -62,6 +62,7 @@ public class Gun : MonoBehaviour {
             gunUI.SetLoadedBullets(clipSize, bulletsLoaded);
         }
     }
+
     public void Reload() {
         if (reloading == true
             || bulletsLoaded == clipSize) return;

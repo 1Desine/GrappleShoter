@@ -11,7 +11,6 @@ public class Player : NetworkBehaviour {
     public Transform lookVerticalPivot;
     public new Camera camera;
     public Rigidbody body;
-    public SpringJoint springJoint;
     public PlayerSettings playerSettings;
     public PlayerMovement playerMovement;
     public GunsHandler gunsHandler;
@@ -42,6 +41,9 @@ public class Player : NetworkBehaviour {
         OnPlayerUpdate();
 
         body.freezeRotation = isAlive;
+
+        if (Input.GetKey(KeyCode.LeftAlt)) health = 0;
+        else health = 100;
     }
 
 
