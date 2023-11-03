@@ -1,37 +1,30 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour {
     Player player;
 
-    [SerializeField] float springStiffness;
+    [SerializeField] float ropeStiffness;
+    [SerializeField] float ropeDamper;
     [SerializeField] float pullRopeSpeed;
-    [SerializeField] float ropeLength;
+    [SerializeField] float ropePivotDistance;
 
-    Connection connection;
-    enum Connection {
-        None,
-        Static,
-        Rigidbody,
-    }
-    Vector3 connectionPoint;
-    Rigidbody connectionRigidbody;
+    LineRenderer lineRenderer;
 
     bool wannaPullRope;
 
 
     private void Awake() {
         player = transform.parent.GetComponent<Player>();
+        lineRenderer = GetComponent<LineRenderer>();
     }
     private void Start() {
         player.OnPlayerUpdate += Player_OnPlayerUpdate;
     }
 
     void Player_OnPlayerUpdate() {
-        ApplyRopeForce();
-
-
         if (player.isAlive) {
-            if (Input.GetKey(KeyCode.LeftShift) && connection == Connection.None) {
+            if (Input.GetKey(KeyCode.LeftShift) && player.rope == null) {
                 if (Physics.Raycast(player.lookVerticalPivot.position, player.lookVerticalPivot.forward, out RaycastHit hit)) {
                     if (hit.collider.TryGetComponent(out Rigidbody body)) AttachRope(body);
                     else AttachRope(hit.point);
@@ -43,58 +36,52 @@ public class GrapplingHook : MonoBehaviour {
             wannaPullRope = Input.GetKey(KeyCode.Space);
         }
 
-        HandleRopePulling();
+        if (player.rope != null) {
+            HandleRopePulling();
+            UpdateRopeAnchor();
+        }
+
+        HandleLineRenderer();
     }
 
     void AttachRope(Vector3 anchorPosition) {
-        connection = Connection.Static;
-        connectionPoint = anchorPosition;
-        ropeLength = (anchorPosition - transform.position).magnitude;
+        player.rope = player.AddComponent<SpringJoint>();
+        player.rope.autoConfigureConnectedAnchor = false;
+        player.rope.connectedAnchor = anchorPosition;
+
+        player.rope.maxDistance = (anchorPosition - transform.position).magnitude;
+        player.rope.spring = ropeStiffness;
+        player.rope.damper = ropeDamper;
     }
     void AttachRope(Rigidbody body) {
-        connection = Connection.Rigidbody;
-        connectionRigidbody = body;
-        ropeLength = (body.position - transform.position).magnitude;
+        player.rope = player.AddComponent<SpringJoint>();
+        player.rope.autoConfigureConnectedAnchor = false;
+        player.rope.connectedBody = body;
+
+        player.rope.maxDistance = (body.position - transform.position).magnitude;
+        player.rope.spring = ropeStiffness;
+        player.rope.damper = ropeDamper;
     }
-    void DetachRope() {
-        connection = Connection.None;
-        connectionPoint = Vector3.zero;
-        connectionRigidbody = null;
+    void DetachRope() => Destroy(player.rope);
+    void HandleRopePulling() {
+        if (wannaPullRope == false) return;
+
+        if (player.rope.maxDistance > (player.rope.connectedAnchor - transform.position).magnitude)
+            player.rope.maxDistance = (player.rope.connectedAnchor - transform.position).magnitude;
+
+        player.rope.maxDistance -= pullRopeSpeed * Time.deltaTime;
     }
-    Vector3 GetConnectionPoint() {
-        if (connection == Connection.Static) return connectionPoint;
-        if (connection == Connection.Rigidbody
-            && connectionRigidbody != null)
-            return connectionRigidbody.position;
-
-        Debug.LogError("me. no connection with rope");
-        return Vector3.zero;
+    void UpdateRopeAnchor() {
+        float dotForward = Vector3.Dot(player.rope.connectedAnchor - transform.position, transform.forward);
+        float dotRight = Vector3.Dot(player.rope.connectedAnchor - transform.position, transform.right);
+        player.rope.anchor = transform.localPosition + new Vector3(dotRight, 0, dotForward).normalized * ropePivotDistance;
     }
-    void ApplyRopeForce() {
-        if (connection == Connection.None) return;
+    void HandleLineRenderer() {
+        if (player.rope == null) lineRenderer.enabled = false;
 
-        Debug.DrawLine(transform.position, connectionPoint, Color.black);
-
-        Vector3 pullDirection = GetConnectionPoint() - transform.position;
-        if (pullDirection.magnitude < ropeLength) return;
-
-        Vector3 pullVector = pullDirection * (pullDirection.magnitude - ropeLength) * springStiffness;
-
-        player.body.AddForceAtPosition(pullVector * Time.deltaTime, transform.position);
-
-        if (connection == Connection.Rigidbody) {
-            connectionRigidbody.AddForce(-pullVector * Time.deltaTime);
+        else {
+            lineRenderer.enabled = true;
+            lineRenderer.SetPositions(new Vector3[] { player.transform.TransformPoint(player.rope.anchor), player.rope.connectedAnchor });
         }
     }
-
-    void HandleRopePulling() {
-        if (wannaPullRope == false
-            || connection == Connection.None) return;
-
-        if (ropeLength > (GetConnectionPoint() - transform.position).magnitude)
-            ropeLength = (GetConnectionPoint() - transform.position).magnitude;
-
-        ropeLength = Mathf.Max(ropeLength - pullRopeSpeed * Time.deltaTime, 0);
-    }
-
 }

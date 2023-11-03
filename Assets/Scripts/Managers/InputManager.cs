@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameInput : MonoBehaviour {
-    static public GameInput Instance { get; private set; }
+public class InputManager : MonoBehaviour {
+    static public InputManager Instance { get; private set; }
 
     PlayerInputActions playerInputActions;
 
@@ -14,9 +14,7 @@ public class GameInput : MonoBehaviour {
         playerInputActions = new PlayerInputActions();
         playerInputActions.Enable();
     }
-
-
-
+    
 
 
     public Vector2 GetLookVector2Delta() {

@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class Player : NetworkBehaviour {
 
@@ -11,9 +9,9 @@ public class Player : NetworkBehaviour {
     public Transform lookVerticalPivot;
     public new Camera camera;
     public Rigidbody body;
-    public PlayerSettings playerSettings;
     public PlayerMovement playerMovement;
     public GunsHandler gunsHandler;
+    public SpringJoint rope { get; set; }
 
     public NetworkObject networkObject;
 
@@ -40,10 +38,8 @@ public class Player : NetworkBehaviour {
 
         OnPlayerUpdate();
 
-        body.freezeRotation = isAlive;
-
-        if (Input.GetKey(KeyCode.LeftAlt)) health = 0;
-        else health = 100;
+        if (Input.GetKeyDown(KeyCode.LeftAlt)) Die();
+        if (Input.GetKeyDown(KeyCode.LeftAlt)) health = 0;
     }
 
 
@@ -64,6 +60,7 @@ public class Player : NetworkBehaviour {
 
     private void Die() {
         Debug.Log("me dead bro", this);
+        body.freezeRotation = false;
         StartCoroutine(SpawnCoroutine());
     }
 
@@ -86,6 +83,7 @@ public class Player : NetworkBehaviour {
         Spawn();
     }
     public void Spawn() {
+        body.freezeRotation = true;
         transform.position = GameManager.Instance.GetRandomSpawnPoint();
         health = 100;
         body.velocity = Vector3.zero;
