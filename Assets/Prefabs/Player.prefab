@@ -177,10 +177,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visual: {fileID: 6106780041108759531}
+  ropeAnchorDistance: 0.5
   ropeStiffness: 100
   ropeDamper: 5
-  pullRopeSpeed: 20
-  ropePivotDistance: 0.5
+  pullRopeSpeed: 15
+  swingForce: 15000
+  maxSwingForce: 1500
+  maxSwingVelocity: 30
 --- !u!120 &1402795810482092089
 LineRenderer:
   serializedVersion: 2
@@ -1184,7 +1187,7 @@ MonoBehaviour:
   playerMovement: {fileID: 2126549854389873862}
   gunsHandler: {fileID: 624067279792652341}
   networkObject: {fileID: -2471056972147329512}
-  suffocationSpeed: 0.1
+  suffocationSpeed: 0.02
   desuffocationSpeed: 1
 --- !u!114 &2126549854389873862
 MonoBehaviour:

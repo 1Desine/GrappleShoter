@@ -51,7 +51,7 @@ public class Player : NetworkBehaviour {
     void UpdateSuffocation() {
         float suffocationApply = 0;
         if (rope != null) {
-            if (rope.currentForce.magnitude > 2) suffocationApply = Mathf.Min(rope.currentForce.magnitude, 5) * suffocationSpeed;
+            if (rope.currentForce.magnitude > 2) suffocationApply = Mathf.Min(rope.currentForce.magnitude, 20) * suffocationSpeed;
             else suffocationApply = -desuffocationSpeed;
         }
         else suffocationApply = -desuffocationSpeed;
