@@ -103,6 +103,7 @@ public class Player : NetworkBehaviour {
         Spawn();
     }
     public void Spawn() {
+        Destroy(rope);
         body.freezeRotation = true;
         transform.position = GameManager.Instance.GetRandomSpawnPoint();
         health = 100;
