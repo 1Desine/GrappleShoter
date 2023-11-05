@@ -1,4 +1,5 @@
 using Unity.VisualScripting;
+using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ public class GrapplingHook : MonoBehaviour {
     [SerializeField] float pullRopeSpeed;
 
     [SerializeField] float swingForce;
-    [SerializeField] float maxSwingForce;
+    [SerializeField] float maxInputAngle;
     [SerializeField] float maxSwingVelocity;
 
     LineRenderer lineRenderer;
@@ -78,21 +79,18 @@ public class GrapplingHook : MonoBehaviour {
         Vector3 ropeDirecion = (player.rope.connectedAnchor - transform.position).normalized;
         Vector3 normalRight = Vector3.Cross(Vector3.up, ropeDirecion).normalized;
         Vector3 normalUp = Vector3.Cross(ropeDirecion, normalRight).normalized;
-        Vector3 coefficientUp = normalUp * Vector3.Dot(player.lookVerticalPivot.forward, normalUp);
-        Vector3 coefficientRight = normalRight * Vector3.Dot(player.lookVerticalPivot.forward, normalRight);
-
+        float coefficientUp = Mathf.Clamp(Vector3.SignedAngle(player.lookVerticalPivot.forward, ropeDirecion, normalRight), -maxInputAngle, maxInputAngle) / maxInputAngle;
+        float coefficientRight = Mathf.Clamp(Vector3.SignedAngle(player.lookVerticalPivot.forward, ropeDirecion, -normalUp), -maxInputAngle, maxInputAngle) / maxInputAngle;
 
         // Debug
-        Debug.DrawRay(player.lookVerticalPivot.transform.position + ropeDirecion.normalized * 5, Vector3.ClampMagnitude(coefficientUp * swingForce, maxSwingForce) / maxSwingForce, Color.red);
-        Debug.DrawRay(player.lookVerticalPivot.transform.position + ropeDirecion.normalized * 5, Vector3.ClampMagnitude(coefficientRight * swingForce, maxSwingForce) / maxSwingForce, Color.blue);
+        Debug.DrawRay(player.lookVerticalPivot.transform.position + ropeDirecion.normalized * 5, normalUp * coefficientUp, Color.red);
+        Debug.DrawRay(player.lookVerticalPivot.transform.position + ropeDirecion.normalized * 5, normalRight * coefficientRight, Color.blue);
 
         // force up
-        if (Vector3.Dot(player.body.velocity, coefficientUp.normalized) < maxSwingVelocity)
-            player.body.AddForce(Vector3.ClampMagnitude(coefficientUp * swingForce, maxSwingForce) * Time.deltaTime);
-
+        if (Vector3.Dot(player.body.velocity, (normalUp * coefficientUp).normalized) < maxSwingVelocity) player.body.AddForce(normalUp * coefficientUp * swingForce * Time.deltaTime);
+        
         // force right
-        if (Vector3.Dot(player.body.velocity, coefficientRight.normalized) < maxSwingVelocity)
-            player.body.AddForce(Vector3.ClampMagnitude(coefficientRight * swingForce, maxSwingForce) * Time.deltaTime);
+        if (Vector3.Dot(player.body.velocity, (normalRight * coefficientRight).normalized) < maxSwingVelocity) player.body.AddForce(normalRight * coefficientRight * swingForce * Time.deltaTime);
     }
     void UpdateRopeAnchor() {
         if (player.rope.connectedBody == null) {
