@@ -23,6 +23,7 @@ public class Player : NetworkBehaviour {
     float suffocation;
 
 
+    public Action OnStart = () => { };
     public Action OnUpdate = () => { };
 
 
@@ -34,7 +35,10 @@ public class Player : NetworkBehaviour {
     private void Start() {
         GameManager.Instance.RegisterPlayer(this);
 
-        if (IsOwner == false) camera.gameObject.SetActive(false);
+        if(IsOwner) {
+            OnStart();
+            camera.gameObject.SetActive(true);
+        }
     }
 
     private void Update() {

@@ -4,9 +4,10 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour {
-    Player player;
 
+    [SerializeField] Player player;
     [SerializeField] GameObject visual;
+    [SerializeField] LineRenderer ropeLine;
     [SerializeField] float ropeAnchorDistance;
     [SerializeField] float ropeStiffness;
     [SerializeField] float ropeDamper;
@@ -16,19 +17,17 @@ public class GrapplingHook : MonoBehaviour {
     [SerializeField] float maxInputAngle;
     [SerializeField] float maxSwingVelocity;
 
-    LineRenderer lineRenderer;
 
 
     private void Awake() {
-        player = transform.parent.GetComponent<Player>();
-        lineRenderer = GetComponent<LineRenderer>();
+        player.OnStart += Player_OnStart;
+        player.OnUpdate += Player_OnUpdate;
+    }    
+    void Player_OnStart() {
         visual.layer = 6;
+        ropeLine.gameObject.SetActive(true);
     }
-    private void Start() {
-        player.OnUpdate += Player_OnPlayerUpdate;
-    }
-
-    void Player_OnPlayerUpdate() {
+    void Player_OnUpdate() {
         if (player.isAlive) {
             if (Input.GetKey(KeyCode.LeftShift) && player.rope == null) {
                 if (Physics.Raycast(player.lookVerticalPivot.position, player.lookVerticalPivot.forward, out RaycastHit hit)) {
@@ -88,7 +87,7 @@ public class GrapplingHook : MonoBehaviour {
 
         // force up
         if (Vector3.Dot(player.body.velocity, (normalUp * coefficientUp).normalized) < maxSwingVelocity) player.body.AddForce(normalUp * coefficientUp * swingForce * Time.deltaTime);
-        
+
         // force right
         if (Vector3.Dot(player.body.velocity, (normalRight * coefficientRight).normalized) < maxSwingVelocity) player.body.AddForce(normalRight * coefficientRight * swingForce * Time.deltaTime);
     }
@@ -105,15 +104,15 @@ public class GrapplingHook : MonoBehaviour {
         }
     }
     void HandleLineRenderer() {
-        if (player.rope == null) lineRenderer.enabled = false;
+        if (player.rope == null) ropeLine.enabled = false;
 
         else {
-            lineRenderer.enabled = true;
-            lineRenderer.SetPosition(0, player.transform.TransformPoint(player.rope.anchor));
+            ropeLine.enabled = true;
+            ropeLine.SetPosition(0, player.transform.TransformPoint(player.rope.anchor));
             if (player.rope.connectedBody != null) {
-                lineRenderer.SetPosition(1, player.rope.connectedBody.position);
+                ropeLine.SetPosition(1, player.rope.connectedBody.position);
             }
-            else lineRenderer.SetPosition(1, player.rope.connectedAnchor);
+            else ropeLine.SetPosition(1, player.rope.connectedAnchor);
         }
     }
 }
