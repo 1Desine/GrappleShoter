@@ -996,12 +996,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f078613c6f46cf54a9aae1f1d1538d71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkObject: {fileID: -2471056972147329512}
+  body: {fileID: 5847881121523112284}
   lookVerticalPivot: {fileID: 5780960301377733354}
   camera: {fileID: 5764574288743604876}
-  body: {fileID: 5847881121523112284}
   playerMovement: {fileID: 2126549854389873862}
   gunsHandler: {fileID: 624067279792652341}
-  networkObject: {fileID: -2471056972147329512}
   suffocationSpeed: 0.02
   desuffocationSpeed: 1
 --- !u!114 &2126549854389873862
@@ -1016,37 +1016,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60bd566d5ea46ec4abe4f3a7f0c46ef9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveForce: 1000
-  moveForceCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -0.8999939
-      outSlope: -0.8999939
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0.1000061
-      inSlope: -0.8999939
-      outSlope: -0.8999939
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  maxSpeedByWalk: 10
-  walkStoppingForce: 5000
-  airMoveForce: 500
-  airbornStoppingForce: 1000
+  walkMoveForce: 500
+  walkStopForce: 5000
+  walkMaxSpeed: 10
   groundFrictionForce: 100
   jumpForce: 150
+  airMoveForce: 300
+  airStopForce: 700
+  airMaxSpeed: 30
 --- !u!1 &6679529123785699856
 GameObject:
   m_ObjectHideFlags: 0
