@@ -42,8 +42,6 @@ public class PlayerMovement : MonoBehaviour {
         Vector2 moveInput = InputManager.Instance.GetMoveVector2();
         Vector3 desiredMoveDir = transform.forward * moveInput.y + transform.right * moveInput.x;
 
-        bool wannaSlowDown = Input.GetKey(KeyCode.LeftControl);
-
 
         RaycastHit[] groundHits = GetGroundCheckHits;
         if (groundHits.Length == 1) {
@@ -73,30 +71,26 @@ public class PlayerMovement : MonoBehaviour {
                 if (hit.collider.transform == transform) continue;
 
                 // move forward
-                Vector3 forwardByNormal = Vector3.Dot(transform.forward, Vector3.Cross(transform.right, hit.normal).normalized) * Vector3.Cross(transform.right, hit.normal).normalized;
-                if (Vector3.Dot(forwardByNormal * moveInput.y, player.body.velocity) < 0)
-                    forwardByNormal *= walkStopForce;
-                else if (Vector3.Dot((forwardByNormal * moveInput.y).normalized, player.body.velocity) < walkMaxSpeed)
-                    forwardByNormal *= walkMoveForce;
-                forwardByNormal *= moveInput.y;
+                Vector3 forwardByNormal = Vector3.Cross(transform.right, hit.normal).normalized;
+                float velocityForward = Vector3.Dot(forwardByNormal, player.body.velocity);
+                if (moveInput.y == 0 || moveInput.y * velocityForward < -0.0001f)
+                    forwardByNormal *= Mathf.Clamp(velocityForward, -1, 1) * -walkStopForce;
+                else if (Mathf.Abs(velocityForward) < walkMaxSpeed)
+                    forwardByNormal *= walkMoveForce * moveInput.y;
 
                 // move right
-                Vector3 rightByNormal = Vector3.Dot(transform.right, Vector3.Cross(transform.forward, hit.normal).normalized) * Vector3.Cross(transform.forward, hit.normal).normalized;
-                if (Vector3.Dot(rightByNormal * moveInput.x, player.body.velocity) < 0)
-                    rightByNormal *= walkStopForce;
-                else if (Vector3.Dot((rightByNormal * moveInput.x).normalized, player.body.velocity) < walkMaxSpeed)
-                    rightByNormal *= walkMoveForce;
-                rightByNormal *= moveInput.x;
+                Vector3 rightByNormal = Vector3.Cross(hit.normal, transform.forward).normalized;
+                float velocityRight = Vector3.Dot(rightByNormal, player.body.velocity);
+                if (moveInput.x == 0 || moveInput.x * velocityRight < -0.0001f)
+                    rightByNormal *= Mathf.Clamp(velocityRight, -1, 1) * -walkStopForce;
+                else if (Mathf.Abs(velocityRight) < walkMaxSpeed)
+                    rightByNormal *= walkMoveForce * moveInput.x;
 
-                // apply move force
                 player.body.AddForce((forwardByNormal + rightByNormal) / (groundHits.Length - 1) * Time.deltaTime);
 
 
                 // jump
                 if (Input.GetKeyDown(KeyCode.Space)) Jump();
-
-                // stop
-                if (wannaSlowDown) player.body.velocity = Vector3.zero;
 
                 // ground friction
                 player.body.AddForce(Vector3.ClampMagnitude(-player.body.velocity, 1) * groundFrictionForce * Time.deltaTime);
