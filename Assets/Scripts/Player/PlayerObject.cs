@@ -7,31 +7,6 @@ using UnityEngine;
 public class PlayerObject : NetworkBehaviour {
 
 
-    public static Dictionary<ulong, PlayerObject> playersDictionary = new Dictionary<ulong, PlayerObject>();
-    private void OnPlayerConnected() {
-        
-    }
-    public static void RegisterPlayer(PlayerObject player) {
-        playersDictionary.Add(player.OwnerClientId, player);
-    }
-    public static void UnregisterPlayer(PlayerObject player) {
-        playersDictionary.Remove(player.OwnerClientId);
-    }
-    [ServerRpc(RequireOwnership = false)]
-    public void Spawn_ServerRpc(ulong id, string name) {
-        PlayerObject player = Instantiate(GameManager.Instance.playerPrefab);
-        player.transform.position = Level.Instance.GetRandomSpawnPoint();
-        player.name = $"Player {id}, {name ?? "guest"}";
-
-        player.networkObject.SpawnWithOwnership(id);
-
-        RegisterPlayer(player);
-    }
-    [ServerRpc(RequireOwnership = false)]
-    public void DestroySelf_ServerRpc() {
-        networkObject.Despawn();
-        UnregisterPlayer(this);
-    }
     bool despawnInstructionHasBeenSent;
     public async void Die() {
         if (despawnInstructionHasBeenSent) return;
@@ -45,10 +20,14 @@ public class PlayerObject : NetworkBehaviour {
 
         await Task.Delay((int)(GameManager.Instance.timeToDespawnPlayer * 1000));
 
-        Spawn_ServerRpc(OwnerClientId, null);
-        DestroySelf_ServerRpc();
+        PlayerSpawner.Instance.Respawn_ServerRpc(OwnerClientId);
     }
 
+    public void DestroySelf() {
+        Debug.Log("Player destroyed", this);
+
+        Destroy(gameObject);
+    }
 
 
     public NetworkObject networkObject;

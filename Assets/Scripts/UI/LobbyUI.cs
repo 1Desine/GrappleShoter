@@ -1,6 +1,8 @@
 using Eflatun.SceneReference;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LobbyUI : MonoBehaviour
@@ -12,7 +14,6 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] Button leaveButton;
     [SerializeField] SceneReference gameScene;
 
-    public string code;
 
     private void Awake() {
         createLobbyButton.onClick.AddListener(CreateLobby);
@@ -24,13 +25,14 @@ public class LobbyUI : MonoBehaviour
 
     async void CreateLobby() {
         await Multiplayer.Instance.CreateLobby();
+
+        SceneLoader.LoadNetwork(gameScene);
         // The host has to change the scene
     }
     async void QuickJoin() {
         await Multiplayer.Instance.QuickJoinLobby();
     }
     async void JoinWithCode() {
-        //await Multiplayer.Instance.JoinLobbyWithCode(code);
         await Multiplayer.Instance.JoinLobbyByCode(joinWithCodeText.text.Trim((char)8203));
     }
     async void Leave() {

@@ -1704,7 +1704,6 @@ MonoBehaviour:
   gameScene:
     asset: {fileID: 102900000, guid: 9fc0d4010bbf28b4594072e72b8655ab, type: 3}
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  code: 
 --- !u!1 &1682359393
 GameObject:
   m_ObjectHideFlags: 0

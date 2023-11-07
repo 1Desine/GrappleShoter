@@ -1017,7 +1017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkMoveForce: 500
-  walkStopForce: 2000
+  walkStopForce: 1000
   walkMaxSpeed: 10
   groundFrictionForce: 100
   jumpForce: 150

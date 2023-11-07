@@ -36,12 +36,12 @@ public class Multiplayer : MonoBehaviour {
 
     Lobby currentLobby;
 
-    const string c_keyJoinCode = "RelayJoinCode";
+    const string keyJoinCode = "RelayJoinCode";
 
-    const float c_lobbyHeartbeatInterval = 20f;
-    const float c_lobbyPollInterval = 65f;
-    HartbeatTimer heartbeatTimer = new HartbeatTimer(c_lobbyHeartbeatInterval);
-    HartbeatTimer pollForUpdatesTimer = new HartbeatTimer(c_lobbyPollInterval);
+    const float lobbyHeartbeatInterval = 20f;
+    const float lobbyPollInterval = 65f;
+    HartbeatTimer heartbeatTimer = new HartbeatTimer(lobbyHeartbeatInterval);
+    HartbeatTimer pollForUpdatesTimer = new HartbeatTimer(lobbyPollInterval);
 
     string connectionType => encryptiontion.ToString().ToLower();
 
@@ -174,7 +174,7 @@ public class Multiplayer : MonoBehaviour {
 
             await LobbyService.Instance.UpdateLobbyAsync(currentLobby.Id, new UpdateLobbyOptions {
                 Data = new Dictionary<string, DataObject> {
-                    {c_keyJoinCode, new DataObject(DataObject.VisibilityOptions.Member, relayJoinCode) }
+                    {keyJoinCode, new DataObject(DataObject.VisibilityOptions.Member, relayJoinCode) }
                 },
             });
 
@@ -217,7 +217,7 @@ public class Multiplayer : MonoBehaviour {
             currentLobby = await LobbyService.Instance.QuickJoinLobbyAsync(quickJoinLobbyOptions);
             pollForUpdatesTimer.Start();
 
-            string relayJoinCode = currentLobby.Data[c_keyJoinCode].Value;
+            string relayJoinCode = currentLobby.Data[keyJoinCode].Value;
             JoinAllocation joinAllocation = await JoinRelay(relayJoinCode);
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(
@@ -280,14 +280,14 @@ public class Multiplayer : MonoBehaviour {
     Player GetPlayer() {
         return new Player {
             Data = new Dictionary<string, PlayerDataObject> {
-                { "PlayerName" , new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName) },
+                { playerId , new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, playerName) },
             }
         };
     }
     void PrintPlayers() {
         Debug.Log("<color=green>Players in Lobby</color> " + currentLobby.Name);
         foreach (var player in currentLobby.Players) {
-            Debug.Log(player.Data["PlayerName"].Value + " <color=green>With ID:</color> " + player.Id);
+            Debug.Log(player.Data[player.Id].Value + " <color=green>With ID:</color> " + player.Id);
         }
     }
 

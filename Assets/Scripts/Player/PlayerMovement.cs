@@ -40,8 +40,6 @@ public class PlayerMovement : MonoBehaviour {
     RaycastHit[] GetGroundCheckHits => Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.49f, Vector3.down, 0.1f);
     void Movement() {
         Vector2 moveInput = InputManager.Instance.GetMoveVector2();
-        Vector3 desiredMoveDir = transform.forward * moveInput.y + transform.right * moveInput.x;
-
 
         RaycastHit[] groundHits = GetGroundCheckHits;
         if (groundHits.Length == 1) {
