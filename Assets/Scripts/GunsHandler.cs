@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GunsHandler : MonoBehaviour {
-    public Player player;
+    public PlayerObject player;
 
     [SerializeField] List<Gun> gunsList;
     int selectedGunIndex = 0;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GrapplingHook : MonoBehaviour {
 
-    [SerializeField] Player player;
+    [SerializeField] PlayerObject player;
     [SerializeField] GameObject visual;
     [SerializeField] LineRenderer ropeLine;
     [SerializeField] float ropeAnchorDistance;

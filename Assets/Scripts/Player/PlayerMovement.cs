@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-    Player player;
+    PlayerObject player;
 
     [Header("Ground")]
     [SerializeField] float walkMoveForce;
@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
 
 
     private void Awake() {
-        player = GetComponent<Player>();
+        player = GetComponent<PlayerObject>();
     }
     private void Start() {
         player.OnUpdate += Player_OnPlayerUpdate;

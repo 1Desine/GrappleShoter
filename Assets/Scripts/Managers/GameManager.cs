@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour { 
     static public GameManager Instance { get; private set; }
 
-    public Player playerPrefab;
+    public PlayerObject playerPrefab;
 
 
     [Header("Game Settings")]

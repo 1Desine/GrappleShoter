@@ -1,24 +1,25 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
-public class Player : NetworkBehaviour {
+public class PlayerObject : NetworkBehaviour {
 
 
-    public static Dictionary<ulong, Player> playersDictionary = new Dictionary<ulong, Player>();
-    public static void RegisterPlayer(Player player) {
+    public static Dictionary<ulong, PlayerObject> playersDictionary = new Dictionary<ulong, PlayerObject>();
+    private void OnPlayerConnected() {
+        
+    }
+    public static void RegisterPlayer(PlayerObject player) {
         playersDictionary.Add(player.OwnerClientId, player);
     }
-    public static void UnregisterPlayer(Player player) {
+    public static void UnregisterPlayer(PlayerObject player) {
         playersDictionary.Remove(player.OwnerClientId);
     }
     [ServerRpc(RequireOwnership = false)]
     public void Spawn_ServerRpc(ulong id, string name) {
-        Player player = Instantiate(GameManager.Instance.playerPrefab);
+        PlayerObject player = Instantiate(GameManager.Instance.playerPrefab);
         player.transform.position = Level.Instance.GetRandomSpawnPoint();
         player.name = $"Player {id}, {name ?? "guest"}";
 

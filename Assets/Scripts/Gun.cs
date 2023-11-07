@@ -50,7 +50,7 @@ public class Gun : MonoBehaviour {
 
             if (Physics.Raycast(gunsHandler.player.camera.transform.position, gunsHandler.player.camera.transform.forward, out RaycastHit hit)) {
                 if (hit.rigidbody != null) {
-                    if (hit.rigidbody.TryGetComponent(out Player playerHit)) {
+                    if (hit.rigidbody.TryGetComponent(out PlayerObject playerHit)) {
                         playerHit.Damage_ServerRpc(damage, hit.point, 
                             (playerHit.transform.position - gunsHandler.player.transform.position).normalized * recoil * GameManager.Instance.recoilModifier, 
                             playerHit.OwnerClientId);
