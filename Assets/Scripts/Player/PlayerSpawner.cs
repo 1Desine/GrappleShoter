@@ -18,7 +18,7 @@ public class PlayerSpawner : NetworkBehaviour {
 
     private void Start() {
         Spawn_ServerRpc(NetworkManager.Singleton.LocalClientId);
-        Debug.Log("client connected: " + OwnerClientId);
+        Debug.Log("client connected: " + NetworkManager.Singleton.LocalClientId);
     }
 
 
@@ -33,7 +33,7 @@ public class PlayerSpawner : NetworkBehaviour {
     }
     [ServerRpc(RequireOwnership = false)]
     public void Spawn_ServerRpc(ulong clientId) {
-        PlayerObject player = Instantiate(GameManager.Instance.playerPrefab);
+        PlayerObject player = Instantiate(playerPrefab);
         player.transform.position = Level.Instance.GetRandomSpawnPoint();
         player.name = $"Player {clientId}, {name ?? "guest"}";
 

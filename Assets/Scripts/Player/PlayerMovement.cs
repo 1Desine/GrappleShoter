@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] float walkMaxSpeed;
     [SerializeField] float groundFrictionForce;
     [SerializeField] float jumpForce;
+    [SerializeField] float jumpImpulsForce;
 
     [Header("Air")]
     [SerializeField] float airMoveForce;
@@ -29,13 +30,13 @@ public class PlayerMovement : MonoBehaviour {
 
     void Player_OnPlayerUpdate() {
         if (player.isAlive) {
-            Looking();
             Movement();
         }
         else {
             player.lookVerticalPivot.localEulerAngles = Vector3.zero;
         }
 
+        Looking();
     }
     RaycastHit[] GetGroundCheckHits => Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.49f, Vector3.down, 0.1f);
     void Movement() {
@@ -43,6 +44,7 @@ public class PlayerMovement : MonoBehaviour {
 
         RaycastHit[] groundHits = GetGroundCheckHits;
         if (groundHits.Length == 1) {
+            if (player.rope != null) return;
             // move while airborn
 
             // move forward
@@ -72,7 +74,7 @@ public class PlayerMovement : MonoBehaviour {
                 Vector3 forwardByNormal = Vector3.Cross(transform.right, hit.normal).normalized;
                 float velocityForward = Vector3.Dot(forwardByNormal, player.body.velocity);
                 if (moveInput.y == 0 || moveInput.y * velocityForward < -0.0001f)
-                    forwardByNormal *= Mathf.Clamp(velocityForward, -1, 1) * -walkStopForce;
+                    forwardByNormal *= Mathf.Clamp(velocityForward / 2, -1, 1) * -walkStopForce;
                 else if (Mathf.Abs(velocityForward) < walkMaxSpeed)
                     forwardByNormal *= walkMoveForce * moveInput.y;
 
@@ -80,7 +82,7 @@ public class PlayerMovement : MonoBehaviour {
                 Vector3 rightByNormal = Vector3.Cross(hit.normal, transform.forward).normalized;
                 float velocityRight = Vector3.Dot(rightByNormal, player.body.velocity);
                 if (moveInput.x == 0 || moveInput.x * velocityRight < -0.0001f)
-                    rightByNormal *= Mathf.Clamp(velocityRight, -1, 1) * -walkStopForce;
+                    rightByNormal *= Mathf.Clamp(velocityRight / 2, -1, 1) * -walkStopForce;
                 else if (Mathf.Abs(velocityRight) < walkMaxSpeed)
                     rightByNormal *= walkMoveForce * moveInput.x;
 
@@ -95,14 +97,24 @@ public class PlayerMovement : MonoBehaviour {
             }
         }
     }
-    void Jump() => player.body.AddForce(Vector3.up * jumpForce);
+    void Jump() {
+        player.body.AddForce(Vector3.up * jumpForce);
+        var moveInput = InputManager.Instance.GetMoveVector2();
+        player.body.AddForce((transform.forward * moveInput.y + transform.right * moveInput.x) * jumpImpulsForce);
+    }
     void Looking() {
-        Vector2 lookInput = InputManager.Instance.GetLookVector2Delta() * 0.1f;
+        Vector2 lookInput = InputManager.Instance.GetLookVector2Delta();
         lookVector += lookInput;
         lookVector.y = Mathf.Clamp(lookVector.y, -90, 90);
 
-        transform.eulerAngles = Vector3.up * lookVector.x;
-        player.lookVerticalPivot.localEulerAngles = -Vector3.right * lookVector.y;
+        if (player.isAlive) {
+            transform.eulerAngles = Vector3.up * lookVector.x;
+            player.lookVerticalPivot.localEulerAngles = Vector3.left * lookVector.y;
+        }
+        else {
+            transform.rotation *= Quaternion.Euler(Vector3.up * lookInput.x);
+            player.lookVerticalPivot.localEulerAngles += Vector3.left * Mathf.Clamp(lookVector.y, -90, 90);
+        }
     }
 
 

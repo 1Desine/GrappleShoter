@@ -24,7 +24,7 @@ public class GunsHandler : MonoBehaviour {
 
 
     public void Shoot() => gunsList[selectedGunIndex].Shoot();
-    public void Reload() => gunsList[selectedGunIndex].Reload();
+    public void Reload() => gunsList[selectedGunIndex].TryStartReload();
 
 
     public void ResetWeapons() {

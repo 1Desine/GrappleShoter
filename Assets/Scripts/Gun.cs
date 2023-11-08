@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Gun : MonoBehaviour {
@@ -35,7 +36,7 @@ public class Gun : MonoBehaviour {
 
     public void Shoot() {
         if (bulletsLoaded == 0) {
-            Reload();
+            TryStartReload();
             return;
         }
 
@@ -51,8 +52,8 @@ public class Gun : MonoBehaviour {
             if (Physics.Raycast(gunsHandler.player.camera.transform.position, gunsHandler.player.camera.transform.forward, out RaycastHit hit)) {
                 if (hit.rigidbody != null) {
                     if (hit.rigidbody.TryGetComponent(out PlayerObject playerHit)) {
-                        playerHit.Damage_ServerRpc(damage, hit.point, 
-                            (playerHit.transform.position - gunsHandler.player.transform.position).normalized * recoil * GameManager.Instance.recoilModifier, 
+                        playerHit.Damage_ServerRpc(damage, hit.point,
+                            (playerHit.transform.position - gunsHandler.player.transform.position).normalized * recoil * GameManager.Instance.recoilModifier,
                             playerHit.OwnerClientId);
                     }
                 }
@@ -63,28 +64,35 @@ public class Gun : MonoBehaviour {
         }
     }
 
-    public void Reload() {
+    public void TryStartReload() {
         if (reloading == true
             || bulletsLoaded == clipSize) return;
 
         reloading = true;
-        reloadProgressTime = 0;
-        StartCoroutine(ReloadCoroutine());
+        reloadProgressTime = (float)bulletsLoaded / clipSize;
+        Reloading();
     }
-    IEnumerator ReloadCoroutine() {
+    async void Reloading() {
         reloadProgressTime += Time.deltaTime;
-        if (reloadProgressTime > reloadTime) {
-            reloading = false;
-            bulletsLoaded = clipSize;
+        if (reloading) {
+            if (reloadProgressTime > reloadTime) {
+                reloading = false;
+                bulletsLoaded = clipSize;
 
-            gunUI.SetLoadedBullets(clipSize, bulletsLoaded);
+                gunUI.SetReloadProgress(reloadTime, 0);
+            }
+            else {
+                await Task.Delay((int)(Time.deltaTime * 1000));
+                gunUI.SetReloadProgress(reloadTime, reloadProgressTime);
+                Reloading();
+            }
+        }
+        else {
+            Debug.Log("Loaded bullets: " + bulletsLoaded);
+            bulletsLoaded = (int)(clipSize * reloadProgressTime / reloadTime);
             gunUI.SetReloadProgress(reloadTime, 0);
         }
-        else if (reloading) {
-            yield return new WaitForSeconds(Time.deltaTime);
-            gunUI.SetReloadProgress(reloadTime, reloadProgressTime);
-            StartCoroutine(ReloadCoroutine());
-        }
+        gunUI.SetLoadedBullets(clipSize, bulletsLoaded);
     }
 
     public void Show() {

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
@@ -12,11 +11,11 @@ public class PlayerObject : NetworkBehaviour {
         if (despawnInstructionHasBeenSent) return;
         despawnInstructionHasBeenSent = true;
 
-        Destroy(rope);
         body.freezeRotation = false;
+        body.constraints = RigidbodyConstraints.FreezeRotationY;
         float randomFloat = UnityEngine.Random.Range(0, 360) * Mathf.Deg2Rad;
         Vector3 randomV3 = new Vector3(Mathf.Cos(randomFloat), 0, Mathf.Sin(randomFloat));
-        body.AddForceAtPosition(transform.position, randomV3 * 100);
+        body.AddForceAtPosition(transform.position, randomV3);
 
         await Task.Delay((int)(GameManager.Instance.timeToDespawnPlayer * 1000));
 
@@ -26,6 +25,7 @@ public class PlayerObject : NetworkBehaviour {
     public void DestroySelf() {
         Debug.Log("Player destroyed", this);
 
+        Destroy(rope);
         Destroy(gameObject);
     }
 

@@ -180,12 +180,16 @@ MonoBehaviour:
   visual: {fileID: 6106780041108759531}
   ropeLine: {fileID: 6448207986640016635}
   ropeAnchorDistance: 0.5
+  minRopeLenght: 4
+  maxRopeConnectDistance: 40
   ropeStiffness: 100
   ropeDamper: 5
-  pullRopeSpeed: 15
-  swingForce: 1100
   maxInputAngle: 10
-  maxSwingVelocity: 20
+  pullRopeSpeed: 8
+  swingForceUp: 2000
+  swingForceRight: 3000
+  maxSwingVelocityUp: 15
+  maxSwingVelocityRight: 10
 --- !u!1 &1346394892631072489
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,8 +453,9 @@ GameObject:
   - component: {fileID: 4513211592914341738}
   - component: {fileID: 5749925293297708349}
   - component: {fileID: 3438174314382994705}
+  - component: {fileID: 8287862084616876330}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -469,7 +474,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5556094735838992686}
-  m_Father: {fileID: 6508977725816942162}
+  m_Father: {fileID: 80281725276404283}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -539,6 +544,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &8287862084616876330
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642399872794789966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72d7169190eaaef47a65b31246b87df8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletsLoadedImage: {fileID: 3032821194962881818}
+  ReloadProgressImage: {fileID: 8359480959850742428}
 --- !u!1 &2075467631102932787
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,7 +788,7 @@ MonoBehaviour:
   m_FillMethod: 1
   m_FillAmount: 0
   m_FillClockwise: 1
-  m_FillOrigin: 1
+  m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &6106780041108759531
@@ -1016,61 +1035,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60bd566d5ea46ec4abe4f3a7f0c46ef9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkMoveForce: 500
-  walkStopForce: 1000
+  walkMoveForce: 1500
+  walkStopForce: 2500
   walkMaxSpeed: 10
-  groundFrictionForce: 100
+  groundFrictionForce: 70
   jumpForce: 150
+  jumpImpulsForce: 100
   airMoveForce: 300
   airStopForce: 700
   airMaxSpeed: 30
---- !u!1 &6679529123785699856
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6508977725816942162}
-  - component: {fileID: 2440967973501298350}
-  m_Layer: 0
-  m_Name: UI
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6508977725816942162
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6679529123785699856}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2607175249672146222}
-  m_Father: {fileID: 80281725276404283}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2440967973501298350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6679529123785699856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72d7169190eaaef47a65b31246b87df8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletsLoadedImage: {fileID: 3032821194962881818}
-  ReloadProgressImage: {fileID: 8359480959850742428}
 --- !u!1 &6743184042918287789
 GameObject:
   m_ObjectHideFlags: 0
@@ -1207,7 +1180,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6508977725816942162}
+  - {fileID: 2607175249672146222}
   - {fileID: 1115886921504100655}
   m_Father: {fileID: 7433224245122438953}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1780,7 +1753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5ed00c9b1b8694699093c50e32c4d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunUI: {fileID: 2440967973501298350}
+  gunUI: {fileID: 8287862084616876330}
   visualTransform: {fileID: 80281725276404283}
   reloadTime: 1
   damage: 10
