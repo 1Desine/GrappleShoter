@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public class InputDebugUI : MonoBehaviour {
@@ -15,13 +16,13 @@ public class InputDebugUI : MonoBehaviour {
     [SerializeField] TextMeshProUGUI SText;
     [SerializeField] TextMeshProUGUI DText;
 
-    [Header("Mouse")]
-    [SerializeField] TextMeshProUGUI mouseSensText;
 
 
     private void Awake() {
         Instance = this;
     }
+
+
     private void Update() {
         ShiftText.color = Input.GetKey(KeyCode.LeftShift) ? Color.green : Color.black;
         AltText.color = Input.GetKey(KeyCode.LeftAlt) ? Color.green : Color.black;
@@ -31,10 +32,6 @@ public class InputDebugUI : MonoBehaviour {
         AText.color = Input.GetKey(KeyCode.A) ? Color.green : Color.black;
         SText.color = Input.GetKey(KeyCode.S) ? Color.green : Color.black;
         DText.color = Input.GetKey(KeyCode.D) ? Color.green : Color.black;        
-    }
-
-    public void SetMouseSensText(float sens) {
-        mouseSensText.text = sens.ToString("F3");
     }
 
 }

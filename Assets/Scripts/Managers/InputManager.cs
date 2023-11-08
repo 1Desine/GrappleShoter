@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour {
 
 
     public Vector2 GetLookVector2Delta() {
-        return playerInputActions.Player.Look.ReadValue<Vector2>() * PlayerSettingsManager.Instance.playerSettingsSO.sensitivity;
+        return playerInputActions.Player.Look.ReadValue<Vector2>() * SettingsManager.Instance.playerSettingsSO.sensitivity;
     }
 
     public Vector2 GetMoveVector2() {

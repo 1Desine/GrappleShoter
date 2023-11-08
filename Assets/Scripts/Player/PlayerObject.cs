@@ -61,10 +61,10 @@ public class PlayerObject : NetworkBehaviour {
         OnStart();
         camera.gameObject.SetActive(true);
 
-        PlayerSettingsManager.Instance.OnFovChanged += SetFov;
+        SettingsManager.Instance.OnFovChanged += SetFov;
         SetFov();
     }
-    void SetFov() => camera.fieldOfView = PlayerSettingsManager.Instance.playerSettingsSO.fov;
+    void SetFov() => camera.fieldOfView = SettingsManager.Instance.playerSettingsSO.fov;
 
     private void Update() {
         if (IsOwner == false) return;

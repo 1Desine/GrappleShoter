@@ -17,6 +17,8 @@ public class PlayerSpawner : NetworkBehaviour {
     }
 
     private void Start() {
+        if (NetworkManager.Singleton == null) return;
+
         Spawn_ServerRpc(NetworkManager.Singleton.LocalClientId);
         Debug.Log("client connected: " + NetworkManager.Singleton.LocalClientId);
     }

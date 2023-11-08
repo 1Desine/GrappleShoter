@@ -926,7 +926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2912463615
+  GlobalObjectIdHash: 2982099055
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -1021,7 +1021,7 @@ MonoBehaviour:
   camera: {fileID: 5764574288743604876}
   playerMovement: {fileID: 2126549854389873862}
   gunsHandler: {fileID: 624067279792652341}
-  suffocationSpeed: 0.02
+  suffocationSpeed: 0
   desuffocationSpeed: 1
 --- !u!114 &2126549854389873862
 MonoBehaviour:
