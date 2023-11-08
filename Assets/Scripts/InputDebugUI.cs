@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ public class InputDebugUI : MonoBehaviour {
     [Header("Mouse")]
     [SerializeField] TextMeshProUGUI mouseSensText;
 
+
     private void Awake() {
         Instance = this;
     }
@@ -28,7 +30,7 @@ public class InputDebugUI : MonoBehaviour {
         RText.color = Input.GetKey(KeyCode.R) ? Color.green : Color.black;
         AText.color = Input.GetKey(KeyCode.A) ? Color.green : Color.black;
         SText.color = Input.GetKey(KeyCode.S) ? Color.green : Color.black;
-        DText.color = Input.GetKey(KeyCode.D) ? Color.green : Color.black;
+        DText.color = Input.GetKey(KeyCode.D) ? Color.green : Color.black;        
     }
 
     public void SetMouseSensText(float sens) {

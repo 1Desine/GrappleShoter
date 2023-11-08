@@ -70,9 +70,9 @@ public class Gun : MonoBehaviour {
 
         reloading = true;
         reloadProgressTime = (float)bulletsLoaded / clipSize;
-        Reloading();
+        StartCoroutine(Reloading());
     }
-    async void Reloading() {
+    IEnumerator Reloading() {
         reloadProgressTime += Time.deltaTime;
         if (reloading) {
             if (reloadProgressTime > reloadTime) {
@@ -82,9 +82,9 @@ public class Gun : MonoBehaviour {
                 gunUI.SetReloadProgress(reloadTime, 0);
             }
             else {
-                await Task.Delay((int)(Time.deltaTime * 1000));
-                gunUI.SetReloadProgress(reloadTime, reloadProgressTime);
-                Reloading();
+                yield return new WaitForSeconds(Time.deltaTime);
+                gunUI.SetReloadProgress(reloadTime, reloadProgressTime); 
+                StartCoroutine(Reloading());
             }
         }
         else {

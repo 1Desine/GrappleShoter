@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class PlayerSettingsSO : ScriptableObject {
 
-    public float sensitivity;
+    public float sensitivity= 0.1f;
+    public float fov = 90f;
 
 }

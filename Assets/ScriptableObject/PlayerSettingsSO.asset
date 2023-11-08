@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: PlayerSettingsSO
   m_EditorClassIdentifier: 
   sensitivity: 0.1
+  fov: 65

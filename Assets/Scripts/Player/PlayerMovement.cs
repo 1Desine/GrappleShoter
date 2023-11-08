@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] float walkStopForce;
     [SerializeField] float walkMaxSpeed;
     [SerializeField] float groundFrictionForce;
+    [SerializeField] float jumpBuffering;
     [SerializeField] float jumpForce;
     [SerializeField] float jumpImpulsForce;
 
@@ -18,25 +19,29 @@ public class PlayerMovement : MonoBehaviour {
 
     Vector2 lookVector;
 
-
+    float lastWannaJumpTime;
 
     private void Awake() {
         player = GetComponent<PlayerObject>();
     }
     private void Start() {
-        player.OnUpdate += Player_OnPlayerUpdate;
+        player.OnUpdate += Player_OnUpdate;
+        player.OnFixedUpdate += Player_OnFixedUpdate;
     }
 
 
-    void Player_OnPlayerUpdate() {
-        if (player.isAlive) {
-            Movement();
-        }
-        else {
+    void Player_OnUpdate() {
+        if (player.isAlive == false) {
             player.lookVerticalPivot.localEulerAngles = Vector3.zero;
         }
 
+
+        if (Input.GetKeyDown(KeyCode.Space)) lastWannaJumpTime = Time.time;
+
         Looking();
+    }
+    void Player_OnFixedUpdate() {
+        Movement();
     }
     RaycastHit[] GetGroundCheckHits => Physics.SphereCastAll(transform.position + Vector3.up * 0.5f, 0.49f, Vector3.down, 0.1f);
     void Movement() {
@@ -64,7 +69,7 @@ public class PlayerMovement : MonoBehaviour {
             rightForce *= moveInput.x;
 
             // apply move force
-            player.body.AddForce((forwardForce + rightForce) * Time.deltaTime);
+            player.body.AddForce((forwardForce + rightForce) * Time.fixedDeltaTime);
         }
         else {
             foreach (RaycastHit hit in groundHits) {
@@ -86,14 +91,14 @@ public class PlayerMovement : MonoBehaviour {
                 else if (Mathf.Abs(velocityRight) < walkMaxSpeed)
                     rightByNormal *= walkMoveForce * moveInput.x;
 
-                player.body.AddForce((forwardByNormal + rightByNormal) / (groundHits.Length - 1) * Time.deltaTime);
+                player.body.AddForce((forwardByNormal + rightByNormal) / (groundHits.Length - 1) * Time.fixedDeltaTime);
 
 
                 // jump
-                if (Input.GetKeyDown(KeyCode.Space)) Jump();
+                if (Time.time - lastWannaJumpTime < jumpBuffering) Jump();
 
                 // ground friction
-                player.body.AddForce(Vector3.ClampMagnitude(-player.body.velocity, 1) * groundFrictionForce * Time.deltaTime);
+                player.body.AddForce(Vector3.ClampMagnitude(-player.body.velocity, 1) * groundFrictionForce * Time.fixedDeltaTime);
             }
         }
     }

@@ -49,21 +49,22 @@ public class PlayerObject : NetworkBehaviour {
 
     public Action OnStart = () => { };
     public Action OnUpdate = () => { };
+    public Action OnFixedUpdate = () => { };
 
 
     private void Awake() {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-
     private void Start() {
-        //RegisterPlayer(this);
+        if (IsOwner == false) return;
+        OnStart();
+        camera.gameObject.SetActive(true);
 
-        if (IsOwner) {
-            OnStart();
-            camera.gameObject.SetActive(true);
-        }
+        PlayerSettingsManager.Instance.OnFovChanged += SetFov;
+        SetFov();
     }
+    void SetFov() => camera.fieldOfView = PlayerSettingsManager.Instance.playerSettingsSO.fov;
 
     private void Update() {
         if (IsOwner == false) return;
@@ -74,6 +75,11 @@ public class PlayerObject : NetworkBehaviour {
         if (Input.GetKeyDown(KeyCode.LeftAlt)) health = 0;
 
         UpdateSuffocation();
+    }
+
+    public void SetCameraFov(float fov) => camera.fieldOfView = fov;
+    private void FixedUpdate() {
+        OnFixedUpdate();
     }
 
     void UpdateSuffocation() {

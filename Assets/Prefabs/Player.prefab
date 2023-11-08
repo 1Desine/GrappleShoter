@@ -110,7 +110,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 183
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -180,16 +180,16 @@ MonoBehaviour:
   visual: {fileID: 6106780041108759531}
   ropeLine: {fileID: 6448207986640016635}
   ropeAnchorDistance: 0.5
+  coolDown: 1
   minRopeLenght: 4
-  maxRopeConnectDistance: 40
+  maxRopeLenght: 30
   ropeStiffness: 100
-  ropeDamper: 5
-  maxInputAngle: 10
-  pullRopeSpeed: 8
-  swingForceUp: 2000
-  swingForceRight: 3000
-  maxSwingVelocityUp: 15
-  maxSwingVelocityRight: 10
+  ropeDamper: 10
+  pullRopeSpeed: 15
+  swingForceUp: 1000
+  swingForceRight: 1500
+  maxSwingVelocityUp: 8
+  maxSwingVelocityRight: 15
 --- !u!1 &1346394892631072489
 GameObject:
   m_ObjectHideFlags: 0
@@ -962,7 +962,7 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
-  Interpolate: 1
+  Interpolate: 0
   SlerpPosition: 0
 --- !u!114 &7420063237037956715
 MonoBehaviour:
@@ -1039,6 +1039,7 @@ MonoBehaviour:
   walkStopForce: 2500
   walkMaxSpeed: 10
   groundFrictionForce: 70
+  jumpBuffering: 0.1
   jumpForce: 150
   jumpImpulsForce: 100
   airMoveForce: 300
@@ -1056,8 +1057,8 @@ GameObject:
   - component: {fileID: 680202690066257740}
   - component: {fileID: 5841023747625683435}
   - component: {fileID: 5521699077261453985}
-  m_Layer: 0
-  m_Name: Capsule
+  m_Layer: 7
+  m_Name: CapsuleCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1371,7 +1372,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7227151679891729684}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1406,8 +1407,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: 1, z: 0}
+  - {x: 0, y: 1, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.1
