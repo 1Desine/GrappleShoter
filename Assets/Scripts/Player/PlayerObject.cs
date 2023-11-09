@@ -51,18 +51,17 @@ public class PlayerObject : NetworkBehaviour {
     public Action OnUpdate = () => { };
     public Action OnFixedUpdate = () => { };
 
-
-    private void Awake() {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+    private void OnEnable() {
+        SettingsManager.Instance.OnFovChanged += SetFov;
+        SetFov();
+    }
+    private void OnDisable() {
+        SettingsManager.Instance.OnFovChanged -= SetFov;
     }
     private void Start() {
         if (IsOwner == false) return;
         OnStart();
         camera.gameObject.SetActive(true);
-
-        SettingsManager.Instance.OnFovChanged += SetFov;
-        SetFov();
     }
     void SetFov() => camera.fieldOfView = SettingsManager.Instance.playerSettingsSO.fov;
 

@@ -21,6 +21,16 @@ public class SettingsManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+
+        HideCursor();
+    }
+    void HideCursor() {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    void ShowCursor() {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void FixedUpdate() {
@@ -29,9 +39,17 @@ public class SettingsManager : MonoBehaviour {
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            if (settingMenuActive) OnHideSettings();
-            else OnShowSettings();
             settingMenuActive = !settingMenuActive;
+            if (settingMenuActive) {
+                OnShowSettings();
+                ShowCursor();
+                InputManager.Instance.DisablePlayerInput();
+            }
+            else {
+                OnHideSettings();
+                HideCursor();
+                InputManager.Instance.EnablePlayerInput();
+            }
         }
     }
 

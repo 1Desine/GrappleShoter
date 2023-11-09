@@ -180,7 +180,7 @@ MonoBehaviour:
   visual: {fileID: 6106780041108759531}
   ropeLine: {fileID: 6448207986640016635}
   ropeAnchorDistance: 0.5
-  coolDown: 1
+  coolDown: 0.5
   minRopeLenght: 4
   maxRopeLenght: 30
   ropeStiffness: 100
@@ -962,7 +962,7 @@ MonoBehaviour:
   UseQuaternionCompression: 0
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
-  Interpolate: 0
+  Interpolate: 1
   SlerpPosition: 0
 --- !u!114 &7420063237037956715
 MonoBehaviour:
@@ -1411,7 +1411,7 @@ LineRenderer:
   - {x: 0, y: 1, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.15
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -1461,7 +1461,7 @@ LineRenderer:
     numCapVertices: 2
     alignment: 0
     textureMode: 1
-    textureScale: {x: 0.44, y: 0.23}
+    textureScale: {x: 0.41, y: 0.05}
     shadowBias: 0
     generateLightingData: 0
   m_MaskInteraction: 0
