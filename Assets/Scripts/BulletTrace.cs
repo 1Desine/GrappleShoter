@@ -9,8 +9,6 @@ public class BulletTrace : NetworkBehaviour {
 
       
     private void Update() {
-        if (IsOwner == false) return;
-
         bullet.transform.localPosition += direction * 100 * Time.deltaTime;
     }
 
