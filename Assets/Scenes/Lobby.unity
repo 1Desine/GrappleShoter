@@ -1101,6 +1101,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &567691708
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 567691710}
+  - component: {fileID: 567691709}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &567691709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 567691708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bec253c78b4fa6428c349679be94f1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AudioClipsSO: {fileID: 11400000, guid: a40065139e14ce344938971d948388f0, type: 2}
+--- !u!4 &567691710
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 567691708}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &579291522
 GameObject:
   m_ObjectHideFlags: 0
@@ -3736,6 +3781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5ed00c9b1b8694699093c50e32c4d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletTrace: {fileID: 0}
   gunUI: {fileID: 684898861}
   visualTransform: {fileID: 813776363}
   reloadTime: 1
@@ -4352,6 +4398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf5ed00c9b1b8694699093c50e32c4d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletTrace: {fileID: 0}
   gunUI: {fileID: 8287862083884188146}
   visualTransform: {fileID: 80281725884877539}
   reloadTime: 1
@@ -5535,6 +5582,7 @@ SceneRoots:
   - {fileID: 541545970}
   - {fileID: 1682359395}
   - {fileID: 2049798887}
+  - {fileID: 567691710}
   - {fileID: 1995185900}
   - {fileID: 940320196}
   - {fileID: 7697996444968127368}

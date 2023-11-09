@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Gun : MonoBehaviour {
@@ -47,21 +47,33 @@ public class Gun : MonoBehaviour {
 
             bulletsLoaded--;
             gunUI.SetLoadedBullets(clipSize, bulletsLoaded);
-            gunsHandler.player.playerMovement.Push(-transform.forward * recoil * GameManager.Instance.recoilModifier);
 
             if (Physics.Raycast(gunsHandler.player.camera.transform.position, gunsHandler.player.camera.transform.forward, out RaycastHit hit)) {
                 if (hit.rigidbody != null) {
                     if (hit.rigidbody.TryGetComponent(out PlayerObject playerHit)) {
-                        playerHit.Damage_ServerRpc(damage, hit.point,
-                            (playerHit.transform.position - gunsHandler.player.transform.position).normalized * recoil * GameManager.Instance.recoilModifier,
-                            playerHit.OwnerClientId);
+                        playerHit.Damage_ServerRpc(damage, playerHit.OwnerClientId, gunsHandler.player.camera.transform.forward * recoil * GameManager.Instance.recoilModifier, hit.point);
+                    }
+                    else if (hit.rigidbody.TryGetComponent(out NetworkObject netObj)) {
+                        PushTarger_ServerRpc(netObj, gunsHandler.player.camera.transform.forward * recoil * GameManager.Instance.recoilModifier, hit.point);
                     }
                 }
                 Debug.DrawLine(transform.position, hit.point, Color.red, 1);
             }
+
+            gunsHandler.player.playerMovement.Push(-transform.forward * recoil * GameManager.Instance.recoilModifier);
+
+            SoundManager.Instance.PlaySoundAtPoint_ServerRpc(AudioClipsSO.Sound.Shoot, transform.position);
+
+            SpawnManager.Instance.SpawnTrace_ServerRpc(transform.position, gunsHandler.player.camera.transform.forward);
         }
     }
+    [ServerRpc(RequireOwnership = false)]
+    void PushTarger_ServerRpc(NetworkObjectReference reference, Vector3 force, Vector3 point) {
+        reference.TryGet(out NetworkObject netObj);
+        netObj.TryGetComponent(out Rigidbody body);
 
+        body.AddForceAtPosition(force, point);
+    }
     public void TryStartReload() {
         if (reloading == true
             || bulletsLoaded == clipSize) return;

@@ -3,10 +3,11 @@ using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
 
-public class PlayerSpawner : NetworkBehaviour {
-    static public PlayerSpawner Instance { get; private set; }
+public class SpawnManager : NetworkBehaviour {
+    static public SpawnManager Instance { get; private set; }
 
     [SerializeField] PlayerObject playerPrefab;
+    [SerializeField] BulletTrace bulletTrace;
 
 
     Dictionary<ulong, PlayerObject> playersDictionary = new Dictionary<ulong, PlayerObject>();
@@ -41,13 +42,26 @@ public class PlayerSpawner : NetworkBehaviour {
 
         player.networkObject.SpawnWithOwnership(clientId);
         RegisterPlayer(player);
+
+        SoundManager.Instance.PlaySoundAtPoint_ServerRpc(AudioClipsSO.Sound.Spawn, player.transform.position);
     }
-
-
     public void RegisterPlayer(PlayerObject player) {
         playersDictionary.Add(player.OwnerClientId, player);
     }
     public void UnregisterPlayer(PlayerObject player) {
         playersDictionary.Remove(player.OwnerClientId);
+    }
+
+
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnTrace_ServerRpc(Vector3 position, Vector3 direction) {
+        BulletTrace trace = Instantiate(bulletTrace);
+
+        trace.bullet.transform.localPosition = position;
+        trace.direction = direction;
+        trace.NetworkObject.Spawn();
+
+        Destroy(trace.gameObject, 1);
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerObject : NetworkBehaviour {
 
@@ -17,9 +18,12 @@ public class PlayerObject : NetworkBehaviour {
         Vector3 randomV3 = new Vector3(Mathf.Cos(randomFloat), 0, Mathf.Sin(randomFloat));
         body.AddForceAtPosition(transform.position, randomV3);
 
+        SoundManager.Instance.PlaySoundAtPoint_ServerRpc(AudioClipsSO.Sound.Die, transform.position);
+
+
         await Task.Delay((int)(GameManager.Instance.timeToDespawnPlayer * 1000));
 
-        PlayerSpawner.Instance.Respawn_ServerRpc(OwnerClientId);
+        SpawnManager.Instance.Respawn_ServerRpc(OwnerClientId);
     }
 
     public void DestroySelf() {
@@ -95,17 +99,17 @@ public class PlayerObject : NetworkBehaviour {
 
 
     [ServerRpc(RequireOwnership = false)]
-    public void Damage_ServerRpc(int damage, Vector3 hitPoint, Vector3 pushVector, ulong playerId) {
-        Damage_ClientRpc(damage, hitPoint, pushVector, playerId);
+    public void Damage_ServerRpc(int damage, ulong playerId, Vector3 force, Vector3 point) {
+        Damage_ClientRpc(damage, playerId,  force,  point);
     }
     [ClientRpc]
-    public void Damage_ClientRpc(int damage, Vector3 hitPoint, Vector3 pushVector, ulong playerId) {
+    public void Damage_ClientRpc(int damage,  ulong playerId, Vector3 force, Vector3 point) {
         if (OwnerClientId != playerId) return;
 
         if (health - damage <= 0 && isAlive) Die();
         health -= damage;
 
-        playerMovement.Push(pushVector, hitPoint);
+        body.AddForceAtPosition(force, point);
     }
 
 

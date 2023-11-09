@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91365ed261633d64281ae3f84fe47012, type: 3}
+  m_Name: AudioClipsSO
+  m_EditorClassIdentifier: 
+  jump:
+  - {fileID: 8300000, guid: ec75e8425d90f414e9aa8e97372e2a14, type: 3}
+  - {fileID: 8300000, guid: 91e6a932e16009544b4f7c62ee601a87, type: 3}
+  land:
+  - {fileID: 8300000, guid: 4cb312a8c6d5bee449fd6e2e0daca057, type: 3}
+  attachRope:
+  - {fileID: 8300000, guid: 87708e22bc8c5e944aad9b5a593b1820, type: 3}
+  detachRope:
+  - {fileID: 8300000, guid: 4a2baa06dbc4ba440aa9a8f2652cca14, type: 3}
+  footStep:
+  - {fileID: 8300000, guid: 6fd04543db84aba488c10cd8f50cf765, type: 3}
+  - {fileID: 8300000, guid: 262e56e0097e9734d8244cfa691e334c, type: 3}
+  - {fileID: 8300000, guid: 11a37d8dcf5669f43abfd5885e3cf7ed, type: 3}
+  - {fileID: 8300000, guid: 1dab6322746165146a054257b4bf42de, type: 3}
+  - {fileID: 8300000, guid: 185ed92c4e0e1c344b3a2d9f2237e1c3, type: 3}
+  shoot:
+  - {fileID: 8300000, guid: ef1f32755a0c4d648a4054943d1e6592, type: 3}
+  - {fileID: 8300000, guid: a112433d8beb198459a51bd28c70f205, type: 3}
+  die:
+  - {fileID: 8300000, guid: 2ee60c8acb3736745ae67ccc30049fa1, type: 3}
+  spawn:
+  - {fileID: 8300000, guid: 694e6196c62eb104589db3c28750dca6, type: 3}

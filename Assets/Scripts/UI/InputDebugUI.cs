@@ -4,7 +4,6 @@ using UnityEditor;
 using UnityEngine;
 
 public class InputDebugUI : MonoBehaviour {
-    static public InputDebugUI Instance { get; private set; }
 
     [Header("Buttons")]
     [SerializeField] TextMeshProUGUI ShiftText;
@@ -17,10 +16,6 @@ public class InputDebugUI : MonoBehaviour {
     [SerializeField] TextMeshProUGUI DText;
 
 
-
-    private void Awake() {
-        Instance = this;
-    }
 
 
     private void Update() {

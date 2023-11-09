@@ -5086,7 +5086,7 @@ GameObject:
   - component: {fileID: 1673661885}
   - component: {fileID: 1673661884}
   m_Layer: 0
-  m_Name: PlayerSpawner
+  m_Name: SpawnManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5120,6 +5120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 4987443683202435991, guid: b94a9c464d7793b42a49d6a0a1cf41d8, type: 3}
+  bulletTrace: {fileID: 8851779885523931765, guid: b54a956194f123548b035e15ad20b72a, type: 3}
 --- !u!114 &1673661885
 MonoBehaviour:
   m_ObjectHideFlags: 0

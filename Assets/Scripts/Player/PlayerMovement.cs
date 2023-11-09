@@ -16,10 +16,13 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] float airMoveForce;
     [SerializeField] float airStopForce;
     [SerializeField] float airMaxSpeed;
+    [Header("Sound")]
+    [SerializeField] float stepSoundDelay;
 
     Vector2 lookVector;
-
     float lastWannaJumpTime;
+    float lastTimeStep;
+
 
     private void Awake() {
         player = GetComponent<PlayerObject>();
@@ -28,8 +31,9 @@ public class PlayerMovement : MonoBehaviour {
         player.OnUpdate += Player_OnUpdate;
         player.OnFixedUpdate += Player_OnFixedUpdate;
     }
-
-
+    private void OnCollisionEnter(Collision collision) {
+        SoundManager.Instance.PlaySoundAtPoint_ServerRpc(AudioClipsSO.Sound.Land, transform.position);
+    }
     void Player_OnUpdate() {
         if (player.isAlive == false) {
             player.lookVerticalPivot.localEulerAngles = Vector3.zero;
@@ -99,6 +103,13 @@ public class PlayerMovement : MonoBehaviour {
 
                 // ground friction
                 player.body.AddForce(Vector3.ClampMagnitude(-player.body.velocity, 1) * groundFrictionForce * Time.fixedDeltaTime);
+
+
+                if (Time.time - lastTimeStep > stepSoundDelay && moveInput != Vector2.zero) {
+                    lastTimeStep = Time.time;
+
+                    SoundManager.Instance.PlaySoundAtPoint_ServerRpc(AudioClipsSO.Sound.FootStep, transform.position);
+                }
             }
         }
     }
@@ -106,6 +117,8 @@ public class PlayerMovement : MonoBehaviour {
         player.body.AddForce(Vector3.up * jumpForce);
         var moveInput = InputManager.Instance.GetMoveVector2();
         player.body.AddForce((transform.forward * moveInput.y + transform.right * moveInput.x) * jumpImpulsForce);
+
+        SoundManager.Instance.PlaySoundAtPoint_ServerRpc(AudioClipsSO.Sound.Jump, transform.position);
     }
     void Looking() {
         Vector2 lookInput = InputManager.Instance.GetLookVector2Delta();
