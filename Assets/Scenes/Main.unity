@@ -2510,14 +2510,14 @@ MonoBehaviour:
   suffocationGradient:
     serializedVersion: 2
     key0: {r: 0.31132078, g: 0.09006763, b: 0.09006763, a: 0}
-    key1: {r: 0.078431375, g: 0, b: 0, a: 0.78431374}
+    key1: {r: 0.078431375, g: 0, b: 0, a: 0.9411765}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 45875
+    ctime0: 0
     ctime1: 65535
     ctime2: 0
     ctime3: 0
@@ -2525,7 +2525,7 @@ MonoBehaviour:
     ctime5: 0
     ctime6: 0
     ctime7: 0
-    atime0: 45875
+    atime0: 0
     atime1: 65535
     atime2: 0
     atime3: 0
@@ -4954,6 +4954,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 2844710257
       objectReference: {fileID: 0}
+    - target: {fileID: 712600458765133054, guid: 712c8030335196746849a663ad14955a, type: 3}
+      propertyPath: AutoObjectParentSync
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 894848958085288519, guid: 712c8030335196746849a663ad14955a, type: 3}
       propertyPath: m_MaxDistance
       value: 3
@@ -4978,6 +4982,18 @@ PrefabInstance:
       propertyPath: m_AutoConfigureConnectedAnchor
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3342963707158406950, guid: 712c8030335196746849a663ad14955a, type: 3}
+      propertyPath: Interpolate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3342963707158406950, guid: 712c8030335196746849a663ad14955a, type: 3}
+      propertyPath: PositionThreshold
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3342963707158406950, guid: 712c8030335196746849a663ad14955a, type: 3}
+      propertyPath: RotAngleThreshold
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6856007554462936234, guid: 712c8030335196746849a663ad14955a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -13.35
@@ -4988,7 +5004,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6856007554462936234, guid: 712c8030335196746849a663ad14955a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.18
+      value: -4.3
       objectReference: {fileID: 0}
     - target: {fileID: 6856007554462936234, guid: 712c8030335196746849a663ad14955a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5864,6 +5880,6 @@ SceneRoots:
   - {fileID: 127106524}
   - {fileID: 410762201}
   - {fileID: 1072760641}
+  - {fileID: 1673661883}
   - {fileID: 1150750223}
   - {fileID: 1912594742}
-  - {fileID: 1673661883}

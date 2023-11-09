@@ -42,9 +42,11 @@ public class PlayerObject : NetworkBehaviour {
     int health = 100;
     public bool isAlive => health > 0;
 
+    [SerializeField] float suffocationTimeDelay;
     [SerializeField] float suffocationSpeed;
     [SerializeField] float desuffocationSpeed;
-    float suffocation;
+    float lastBreathTime;
+    float suffocation01;
 
 
     public Action OnStart = () => { };
@@ -82,18 +84,13 @@ public class PlayerObject : NetworkBehaviour {
     }
 
     void UpdateSuffocation() {
-        float suffocationApply = 0;
-        if (rope != null) {
-            if (rope.currentForce.magnitude > 2) suffocationApply = Mathf.Min(rope.currentForce.magnitude, 20) * suffocationSpeed;
-            else suffocationApply = -desuffocationSpeed;
-        }
-        else suffocationApply = -desuffocationSpeed;
+        if (rope == null) lastBreathTime = Time.time;
 
-        suffocation = Mathf.Clamp01(suffocation + suffocationApply * Time.deltaTime);
+        suffocation01 = Mathf.Clamp01(suffocation01 +
+            (Time.time - lastBreathTime > suffocationTimeDelay ? suffocationSpeed : -desuffocationSpeed)
+            * Time.deltaTime);
 
-        if (PlayerUI.Instance != null) {
-            PlayerUI.Instance.SetSuffocation(suffocation);
-        }
+        PlayerUI.Instance?.SetSuffocation(suffocation01);
     }
 
 

@@ -1,6 +1,8 @@
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Unity.Burst.Intrinsics.Arm;
 
 public class GrapplingHook : NetworkBehaviour {
 
@@ -8,13 +10,18 @@ public class GrapplingHook : NetworkBehaviour {
     [SerializeField] GameObject visual;
     [SerializeField] LineRenderer ropeLine;
 
-    NetworkVariable<bool> ropeConnectedNV = new NetworkVariable<bool>(
+    NetworkVariable<bool> ropeIsConnectedNV = new NetworkVariable<bool>(
         false,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner
         );
-    NetworkVariable<Vector3> connectedAnchorPointNV = new NetworkVariable<Vector3>(
+    NetworkVariable<Vector3> ropeConnectedAnchorNV = new NetworkVariable<Vector3>(
         Vector3.zero,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner
+        );
+    NetworkVariable<NetworkObjectReference> ropeConnectedNetworkObjectNV = new NetworkVariable<NetworkObjectReference>(
+        new NetworkObjectReference(),
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner
         );
@@ -42,17 +49,26 @@ public class GrapplingHook : NetworkBehaviour {
         player.OnFixedUpdate += Player_OnFixedUpdate;
 
 
-        connectedAnchorPointNV.OnValueChanged += (p, c) => {
+        ropeConnectedAnchorNV.OnValueChanged += (p, c) => {
             ropeLine.SetPosition(1, c);
         };
-        ropeConnectedNV.OnValueChanged += (p, c) => {
+        ropeIsConnectedNV.OnValueChanged += (p, c) => {
             ropeLine.enabled = c;
         };
     }
     void Update() {
-        if (ropeConnectedNV.Value) {
-            float dotForward = Vector3.Dot(connectedAnchorPointNV.Value - transform.position, transform.forward);
-            float dotRight = Vector3.Dot(connectedAnchorPointNV.Value - transform.position, transform.right);
+        if (ropeIsConnectedNV.Value) {
+            if (ropeConnectedNetworkObjectNV.Value.TryGet(out NetworkObject networkObject))
+                if (networkObject.TryGetComponent(out Rigidbody body))
+                    ropeLine.SetPosition(1, body.transform.TransformPoint(body.centerOfMass));
+
+            Vector3 connectedAnchor = ropeConnectedAnchorNV.Value;
+            if (networkObject != null) {
+                connectedAnchor = networkObject.transform.position;
+            }
+
+            float dotForward = Vector3.Dot(connectedAnchor - transform.position, transform.forward);
+            float dotRight = Vector3.Dot(connectedAnchor - transform.position, transform.right);
             Vector3 anchor = transform.localPosition + new Vector3(dotRight, 0, dotForward).normalized * ropeAnchorDistance;
 
             ropeLine.SetPosition(0, player.transform.TransformPoint(anchor));
@@ -67,7 +83,7 @@ public class GrapplingHook : NetworkBehaviour {
                 && player.rope == null
                 && Time.time - lastConnectedHookTime > coolDown) {
                 if (Physics.Raycast(player.lookVerticalPivot.position, player.lookVerticalPivot.forward, out RaycastHit hit, maxRopeLenght)) {
-                    if (hit.collider.TryGetComponent(out Rigidbody body)) AttachRope(body);
+                    if (hit.rigidbody != null) AttachRope(hit.rigidbody);
                     else AttachRope(hit.point);
                 }
             }
@@ -76,32 +92,39 @@ public class GrapplingHook : NetworkBehaviour {
             }
         }
 
-        UpdateRopeAnchors();
+        UpdateRopeConnectedAnchor();
     }
     void Player_OnFixedUpdate() {
         HandleRopePulling();
     }
 
-    void AttachRope(object anchor) {
+    void AttachRope(object connectedAnchor) {
         player.rope = player.AddComponent<SpringJoint>();
         player.rope.autoConfigureConnectedAnchor = false;
         player.rope.spring = ropeStiffness;
         player.rope.damper = ropeDamper;
 
-        if (anchor is Vector3 vecotor) {
-            player.rope.connectedAnchor = vecotor;
+        if (connectedAnchor is Vector3 vector) {
+            player.rope.connectedAnchor = vector;
         }
-        else if (anchor is Rigidbody body) {
-            player.rope.connectedAnchor = body.position;
+        else if (connectedAnchor is Rigidbody body) {
+            if (body.TryGetComponent(out NetworkObject networkObject)) ropeConnectedNetworkObjectNV.Value = networkObject;
+            player.rope.connectedBody = body;
+            player.rope.connectedAnchor = body.centerOfMass;
+            Debug.DrawLine(transform.position, player.rope.connectedAnchor, Color.red, 2);
         }
         player.rope.maxDistance = Mathf.Max((player.rope.connectedAnchor - transform.position).magnitude, minRopeLenght);
 
-        connectedAnchorPointNV.Value = player.rope.connectedAnchor;
-
         lastConnectedHookTime = Time.time;
+
+        ropeIsConnectedNV.Value = true;
+        ropeConnectedAnchorNV.Value = player.rope.connectedAnchor;
     }
     void DetachRope() {
         Destroy(player.rope);
+        ropeIsConnectedNV.Value = false;
+        ropeConnectedAnchorNV.Value = Vector3.zero;
+        ropeConnectedNetworkObjectNV.Value = new NetworkObjectReference();
     }
     void HandleRopePulling() {
         if (player.rope == null
@@ -128,11 +151,10 @@ public class GrapplingHook : NetworkBehaviour {
         // force right
         if (Vector3.Dot(player.body.velocity, normalRight) < maxSwingVelocityRight) player.body.AddForce(normalRight * swingForceRight * Time.fixedDeltaTime);
     }
-    void UpdateRopeAnchors() {
-        if (ropeConnectedNV.Value = player.rope != null) {
-            if (player.rope.connectedBody != null) {
-                connectedAnchorPointNV.Value = player.rope.connectedBody.position;
-            }
-        }
+    void UpdateRopeConnectedAnchor() {
+        if (player.rope == null) return;
+        if (player.rope.connectedBody == null) return;
+
+        //ropeConnectedAnchorNV.Value = player.rope.connectedBody.transform.TransformPoint(player.rope.connectedBody.centerOfMass);
     }
 }

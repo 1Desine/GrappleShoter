@@ -1021,7 +1021,8 @@ MonoBehaviour:
   camera: {fileID: 5764574288743604876}
   playerMovement: {fileID: 2126549854389873862}
   gunsHandler: {fileID: 624067279792652341}
-  suffocationSpeed: 0
+  suffocationTimeDelay: 200
+  suffocationSpeed: 0.5
   desuffocationSpeed: 1
 --- !u!114 &2126549854389873862
 MonoBehaviour:

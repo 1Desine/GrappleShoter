@@ -41,12 +41,12 @@ public class Gun : MonoBehaviour {
         }
 
         reloading = false;
-        gunUI.SetReloadProgress(reloadTime, 0);
 
         if (Time.time - lastShotTime > _fireRate) {
             lastShotTime = Time.time;
 
             bulletsLoaded--;
+            gunUI.SetLoadedBullets(clipSize, bulletsLoaded);
             gunsHandler.player.playerMovement.Push(-transform.forward * recoil * GameManager.Instance.recoilModifier);
 
             if (Physics.Raycast(gunsHandler.player.camera.transform.position, gunsHandler.player.camera.transform.forward, out RaycastHit hit)) {
@@ -59,8 +59,6 @@ public class Gun : MonoBehaviour {
                 }
                 Debug.DrawLine(transform.position, hit.point, Color.red, 1);
             }
-
-            gunUI.SetLoadedBullets(clipSize, bulletsLoaded);
         }
     }
 
@@ -83,7 +81,7 @@ public class Gun : MonoBehaviour {
             }
             else {
                 yield return new WaitForSeconds(Time.deltaTime);
-                gunUI.SetReloadProgress(reloadTime, reloadProgressTime); 
+                gunUI.SetReloadProgress(reloadTime, reloadProgressTime);
                 StartCoroutine(Reloading());
             }
         }
